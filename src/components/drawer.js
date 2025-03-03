@@ -125,6 +125,7 @@ export function FullOpenDrawer() {
         {/* <NavItem to="/nostra">Nostra</NavItem> */}
         <NavItem to="/unruggable">Unruggable</NavItem>
         <NavItem to="/endurLst">Endur LST xSTRK</NavItem>
+        <NavItem to="/starknetJS">StarknetJS</NavItem>
         {/* <NavItem to="/strkFarm">STRK Farm</NavItem> */}
         <Flex
           px="4"

@@ -11,6 +11,7 @@ import Unruggable from './views/unruggable/Unruggable';
 import CurrStatus from './views/currStatus/currStatus';
 import EndurLst from './views/endurLst/endurLst';
 import StrkFarm from './views/strkFarm/strkFarm';
+import StarknetjsTrial from './views/starknetjsTrial/starknetjsTrial';
 
 // Define the routes
 const router = createBrowserRouter([
@@ -57,6 +58,10 @@ const router = createBrowserRouter([
       {
         path: 'currentStatus',
         element: <CurrStatus />,
+      },
+      {
+        path: 'starknetJS',
+        element: <StarknetjsTrial />,
       },
     ],
   },
