@@ -3,9 +3,8 @@ import React, { StrictMode } from 'react';
 import * as ReactDOM from 'react-dom/client';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-import { http, createConfig, WagmiProvider } from 'wagmi';
+import { http, createConfig } from 'wagmi';
 import { sepolia, mainnet } from 'wagmi/chains';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AppKitProvider } from './utils/appkitProvider';
 import { walletConnect } from 'wagmi/connectors';
 import ErrorBoundary from './components/errorBoundry';
@@ -45,8 +44,6 @@ export const config = createConfig({
 
 const container = document.getElementById('root');
 const root = ReactDOM.createRoot(container);
-
-const queryClient = new QueryClient();
 
 // root.render(
 //   <StrictMode>

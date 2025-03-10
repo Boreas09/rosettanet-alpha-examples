@@ -4,7 +4,6 @@ import { WagmiProvider } from 'wagmi';
 import { defineChain, sepolia } from '@reown/appkit/networks';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
-import { walletConnect, coinbaseWallet, injected } from 'wagmi/connectors';
 
 // 0. Setup queryClient
 const queryClient = new QueryClient();
