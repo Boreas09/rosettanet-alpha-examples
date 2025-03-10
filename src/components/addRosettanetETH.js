@@ -11,7 +11,7 @@ export default function AddRosettanetETH() {
     if (window.ethereum && address) {
       setLoading(true);
       try {
-        const tokenAddress = '0xB5E1278663de249F8580Ec51b6B61739bd906215'; // Replace with your token's contract address
+        const tokenAddress = '0xb5e1278663de249f8580ec51b6b61739bd906215'; // Replace with your token's contract address
         const tokenSymbol = 'ETH'; // Replace with your token's symbol
         const tokenDecimals = 18; // Replace with your token's decimals
 

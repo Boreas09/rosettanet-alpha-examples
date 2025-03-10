@@ -14,9 +14,8 @@ import { useState } from 'react';
 import { useAccount } from 'wagmi';
 import { getStarknetAddress } from '../../utils/starknetUtils';
 import { parseEther } from 'ethers';
-import { prepareMulticallCalldata } from '../../utils/multicall';
+import { calldataWithEncode } from '../../utils/multicall';
 import { sendTransaction } from '@wagmi/core';
-import { config } from '../..';
 import { cairo } from 'starknet';
 import BigNumber from 'bignumber.js';
 import { reownConfig } from '../../utils/appkitProvider';
@@ -58,17 +57,16 @@ export default function EndurLstUnstake() {
     try {
       const starkAmount = cairo.uint256(parseEther(amount));
       const calldata = [
-        {
-          to: '0x042de5b868da876768213c48019b8d46cd484e66013ae3275f8a4b97b31fc7eb',
-          entrypoint:
-            '0x15511cc3694f64379908437d6d64458dc76d02482052bfb8a5b33a72c054c77',
-          calldata: [
-            new BigNumber(starkAmount.low).toString(16),
-            new BigNumber(starkAmount.high).toString(16),
+        [
+          '0x042de5b868da876768213c48019b8d46cd484e66013ae3275f8a4b97b31fc7eb',
+          '0x15511cc3694f64379908437d6d64458dc76d02482052bfb8a5b33a72c054c77',
+          [
+            '0x' + new BigNumber(starkAmount.low).toString(16),
+            '0x' + new BigNumber(starkAmount.high).toString(16),
             snAddress,
             snAddress,
           ],
-        },
+        ],
       ];
 
       const response = await sendTransaction(reownConfig, {
@@ -76,8 +74,7 @@ export default function EndurLstUnstake() {
         account: address,
         to: address,
         value: parseEther('0'),
-        data: prepareMulticallCalldata(calldata),
-        gasLimit: 70000,
+        data: calldataWithEncode(calldata),
       });
       console.log('Transaction sent:', response);
       setTransactions(prevData => [...prevData, response]);

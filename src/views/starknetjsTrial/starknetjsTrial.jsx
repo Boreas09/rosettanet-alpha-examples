@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { RosettanetAccount } from 'starknet';
+import { RosettanetAccount, rosettanetWallet } from 'starknet';
 import {
   Box,
   Container,
@@ -9,11 +9,13 @@ import {
   Button,
 } from '@chakra-ui/react';
 import { connect } from '@starknet-io/get-starknet';
+import { useSignMessage } from 'wagmi';
 
 export default function StarknetjsTrial() {
   const [walletName, setWalletName] = useState('');
   const [selectedAccount, setSelectedAccount] = useState(null);
   const [blockNumber, setBlockNumber] = useState('0x0');
+  // const { signMessage } = useSignMessage();
   const toast = useToast();
 
   function handleConnect() {
@@ -25,12 +27,13 @@ export default function StarknetjsTrial() {
     };
   }
 
-  async function connectJs() {
+  async function getblockNumber() {
     let rAccount;
     if (selectedAccount) {
+      console.log();
       rAccount = await RosettanetAccount.connect(
         {
-          nodeUrl: 'https://alpha-deployment.starknet.io',
+          nodeUrl: 'http://localhost:3000',
         },
         selectedAccount
       );
@@ -45,12 +48,56 @@ export default function StarknetjsTrial() {
 
     if (rAccount) {
       try {
-        rAccount.walletProvider
+        await rAccount.walletProvider
           .request({ method: 'eth_blockNumber' })
           .then(res => {
             console.log(res);
             setBlockNumber(res);
           });
+
+        await rAccount.chainIdRosettanet().then(res => {
+          console.log(res);
+        });
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  }
+
+  async function signMessage() {
+    let rAccount;
+    if (selectedAccount) {
+      rAccount = await RosettanetAccount.connect(
+        {
+          nodeUrl: 'http://localhost:3000',
+        },
+        selectedAccount
+      );
+    } else {
+      toast({
+        title: 'Disconnect from left menu and connect with get-starknet.',
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+      });
+    }
+
+    if (rAccount) {
+      try {
+        // await rAccount.walletProvider
+        //   .request({
+        //     method: 'personal_sign',
+        //     params: ['0x1110011', '0xE4306a06B19Fdc04FDf98cF3c00472f29254c0e1'],
+        //   })
+        //   .then(res => {
+        //     console.log(res);
+        //     setBlockNumber(res);
+        //   });
+
+        await rAccount.signMessageRosettanet({
+          message: 'Hello',
+          address: rAccount.address,
+        });
       } catch (e) {
         console.log(e);
       }
@@ -74,9 +121,10 @@ export default function StarknetjsTrial() {
       </Text>
       <Box width="100%" my={4} gap={4} display="flex">
         <Button onClick={handleConnect()}>Connect With get-starknet</Button>
-        <Button onClick={connectJs}>
+        <Button onClick={getblockNumber}>
           Get Block Number of Starknet Sepolia
         </Button>
+        <Button onClick={signMessage}>Sign Message</Button>
       </Box>
       <Text>Block Number : {parseInt(blockNumber, 16)}</Text>
       <Text>Wallet Name : {walletName}</Text>

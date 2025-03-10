@@ -14,9 +14,8 @@ import { useState } from 'react';
 import { useAccount } from 'wagmi';
 import { getStarknetAddress } from '../../utils/starknetUtils';
 import { parseEther } from 'ethers';
-import { prepareMulticallCalldata } from '../../utils/multicall';
+import { calldataWithEncode } from '../../utils/multicall';
 import { sendTransaction } from '@wagmi/core';
-import { config } from '../..';
 import { cairo } from 'starknet';
 import BigNumber from 'bignumber.js';
 import { reownConfig } from '../../utils/appkitProvider';
@@ -28,8 +27,6 @@ export default function EndurLstStake() {
   const [transactions, setTransactions] = useState([]);
   const toast = useToast();
   const [loading, setLoading] = useState(false);
-
-  const handleAddToken = async () => {};
 
   const handleStake = async () => {
     setLoading(true);
@@ -61,26 +58,24 @@ export default function EndurLstStake() {
     try {
       const starkAmount = cairo.uint256(parseEther(amount));
       const calldata = [
-        {
-          to: '0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d',
-          entrypoint:
-            '0x0219209e083275171774dab1df80982e9df2096516f06319c5c6d71ae0a8480c',
-          calldata: [
+        [
+          '0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d',
+          '0x0219209e083275171774dab1df80982e9df2096516f06319c5c6d71ae0a8480c',
+          [
             '0x042de5b868da876768213c48019b8d46cd484e66013ae3275f8a4b97b31fc7eb',
-            new BigNumber(starkAmount.low).toString(16),
-            new BigNumber(starkAmount.high).toString(16),
+            '0x' + new BigNumber(starkAmount.low).toString(16),
+            '0x' + new BigNumber(starkAmount.high).toString(16),
           ],
-        },
-        {
-          to: '0x042de5b868da876768213c48019b8d46cd484e66013ae3275f8a4b97b31fc7eb',
-          entrypoint:
-            '0x00c73f681176fc7b3f9693986fd7b14581e8d540519e27400e88b8713932be01',
-          calldata: [
-            new BigNumber(starkAmount.low).toString(16),
-            new BigNumber(starkAmount.high).toString(16),
+        ],
+        [
+          '0x042de5b868da876768213c48019b8d46cd484e66013ae3275f8a4b97b31fc7eb',
+          '0x00c73f681176fc7b3f9693986fd7b14581e8d540519e27400e88b8713932be01',
+          [
+            '0x' + new BigNumber(starkAmount.low).toString(16),
+            '0x' + new BigNumber(starkAmount.high).toString(16),
             snAddress,
           ],
-        },
+        ],
       ];
 
       const response = await sendTransaction(reownConfig, {
@@ -88,8 +83,7 @@ export default function EndurLstStake() {
         account: address,
         to: address,
         value: parseEther('0'),
-        data: prepareMulticallCalldata(calldata),
-        gasLimit: 70000,
+        data: calldataWithEncode(calldata),
       });
       console.log('Transaction sent:', response);
       setTransactions(prevData => [...prevData, response]);

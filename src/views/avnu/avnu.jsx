@@ -12,8 +12,7 @@ import {
 import { getStarknetAddress } from '../../utils/starknetUtils';
 import { useAccount } from 'wagmi';
 import { sendTransaction } from '@wagmi/core';
-import { prepareMulticallCalldata } from '../../utils/multicall';
-import { config } from '../..';
+import { calldataWithEncode } from '../../utils/multicall';
 import { parseEther } from 'ethers';
 import { reownConfig } from '../../utils/appkitProvider';
 
@@ -51,10 +50,9 @@ export default function Avnu() {
     try {
       // sell eth get strk
       const snAddress = await getStarknetAddress(address);
+
       const getQuotes = await fetch(
-        `https://sepolia.api.avnu.fi/swap/v1/quotes?sellTokenAddress=0x49d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7&buyTokenAddress=0x4718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d&sellAmount=0x38d7ea4c68000&takerAddress=0x${snAddress.toString(
-          16
-        )}&excludeSources=10KSwap&size=1`
+        'https://sepolia.api.avnu.fi/swap/v2/quotes?sellTokenAddress=0x4718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d&buyTokenAddress=0x49d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7&sellAmount=0xDE0B6B3A7640000'
       );
       const getQuotesResponse = await getQuotes.json();
       const quoteId = getQuotesResponse[0].quoteId;
@@ -80,31 +78,24 @@ export default function Avnu() {
       const buildSwapDataResponse = await buildSwapData.json();
 
       const calldata = [
-        //send ethereum ile iletişim
-        {
-          to: '0x49d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7',
-          entrypoint:
-            '0x0219209e083275171774dab1df80982e9df2096516f06319c5c6d71ae0a8480c',
-          calldata: buildSwapDataResponse.calls[0].calldata,
-        },
-        {
-          to: '0x2c56e8b00dbe2a71e57472685378fc8988bba947e9a99b26a00fade2b4fe7c2',
-          entrypoint:
-            '0x01171593aa5bdadda4d6b0efde6cc94ee7649c3163d5efeb19da6c16d63a2a63',
-          calldata: buildSwapDataResponse.calls[1].calldata,
-        },
+        [
+          '0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d',
+          '0x0219209e083275171774dab1df80982e9df2096516f06319c5c6d71ae0a8480c',
+          buildSwapDataResponse.calls[0].calldata,
+        ],
+        [
+          '0x2c56e8b00dbe2a71e57472685378fc8988bba947e9a99b26a00fade2b4fe7c2',
+          '0x01171593aa5bdadda4d6b0efde6cc94ee7649c3163d5efeb19da6c16d63a2a63',
+          buildSwapDataResponse.calls[1].calldata,
+        ],
       ];
-
-      console.log(config);
-      console.log(reownConfig);
 
       const response = await sendTransaction(reownConfig, {
         chainId: 1381192787,
         account: address,
         to: address,
         value: parseEther('0'),
-        data: prepareMulticallCalldata(calldata),
-        gasLimit: 70000,
+        data: calldataWithEncode(calldata),
       });
       console.log('Transaction sent:', response);
       setTransactions(prevData => [...prevData, response]);
@@ -131,7 +122,7 @@ export default function Avnu() {
         Avnu Exchange ETH to STRK
       </Text>
       <Text as="cite" fontSize={'sm'}>
-        This part using Avnu to exchange 0,001 ETH to STRK. After successfully
+        This part using Avnu to exchange 1 STRK to ETH. After successfully
         exchange we can see our increased STRK amount in Wallet.
       </Text>
       <Text as="cite" fontSize={'sm'} display={'block'} mt={2}>

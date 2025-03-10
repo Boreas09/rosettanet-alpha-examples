@@ -1,3 +1,5 @@
+import { AbiCoder } from 'ethers';
+
 function addHexPadding(value, targetLength, prefix) {
   if (value.length === 0) {
     return prefix ? '0x' + '0'.repeat(targetLength) : '0'.repeat(targetLength);
@@ -34,4 +36,18 @@ export function prepareMulticallCalldata(calls) {
   }
 
   return calldata.join('');
+}
+
+export function calldataWithEncode(call) {
+  const abiCoder = new AbiCoder();
+  const fnSelector = '0x76971d7f';
+
+  const calldataEncoded = abiCoder.encode(
+    ['tuple(uint256,uint256,uint256[])[]'],
+    [call]
+  );
+
+  const calldata = fnSelector + calldataEncoded.replace('0x', '');
+
+  return calldata;
 }

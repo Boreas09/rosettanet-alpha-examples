@@ -12,8 +12,7 @@ import {
 } from '@chakra-ui/react';
 import { sendTransaction } from '@wagmi/core';
 import { useAccount } from 'wagmi';
-import { config } from '../..';
-import { prepareMulticallCalldata } from '../../utils/multicall';
+import { calldataWithEncode } from '../../utils/multicall';
 import { parseEther } from 'viem';
 import { getStarknetAddress } from '../../utils/starknetUtils';
 import { cairo } from 'starknet';
@@ -90,11 +89,10 @@ export default function Unruggable() {
     const snAddress = await getStarknetAddress(address);
 
     const createMemecoinCalldata = [
-      {
-        to: '0x00494a72a742b7880725a965ee487d937fa6d08a94ba4eb9e29dd0663bc653a2',
-        entrypoint:
-          '0x014b9c006653b96dd1312a62b5921c465d08352de1546550f0ed804fcc0ef9e9',
-        calldata: [
+      [
+        '0x00494a72a742b7880725a965ee487d937fa6d08a94ba4eb9e29dd0663bc653a2',
+        '0x014b9c006653b96dd1312a62b5921c465d08352de1546550f0ed804fcc0ef9e9',
+        [
           '0x' + snAddress.toString(16),
           '0x' + asciiToHex(tokenName),
           '0x' + asciiToHex(tokenSymbol),
@@ -102,16 +100,16 @@ export default function Unruggable() {
           '0x' + initialSupplyUint256.high.toString(16),
           '0x' + asciiToHex(contractSalt),
         ],
-      },
+      ],
     ];
+
     try {
       const response = await sendTransaction(reownConfig, {
         chainId: 1381192787,
         account: address,
         to: address,
         value: parseEther('0'),
-        data: prepareMulticallCalldata(createMemecoinCalldata),
-        gasLimit: 21000,
+        data: calldataWithEncode(createMemecoinCalldata),
       });
       console.log('Transaction sent:', response);
       setTransactions(prevData => [...prevData, response]);

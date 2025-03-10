@@ -13,8 +13,7 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import { parseEther } from 'ethers';
-import { prepareMulticallCalldata } from '../../utils/multicall';
-import { config } from '../..';
+import { calldataWithEncode } from '../../utils/multicall';
 import { useAppKitAccount } from '@reown/appkit/react';
 import { cairo } from 'starknet';
 import BigNumber from 'bignumber.js';
@@ -68,35 +67,32 @@ export default function StarkgateWithdraw() {
 
       const withdrawCalldata = [
         //send ethereum ile iletişim
-        {
-          to: '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7',
-          entrypoint:
-            '0x0083afd3f4caedc6eebf44246fe54e38c95e3179a5ec9ea81740eca5b482d12e',
-          calldata: [
-            '7D33254052409C04510C3652BC5BE5656F1EFF1B131C7C031592E3FA73F1F70',
-            new BigNumber(starkAmount.low).toString(16),
-            new BigNumber(starkAmount.high).toString(16),
+        [
+          '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7',
+          '0x0083afd3f4caedc6eebf44246fe54e38c95e3179a5ec9ea81740eca5b482d12e',
+          [
+            '0x7D33254052409C04510C3652BC5BE5656F1EFF1B131C7C031592E3FA73F1F70',
+            '0x' + new BigNumber(starkAmount.low).toString(16),
+            '0x' + new BigNumber(starkAmount.high).toString(16),
           ],
-        },
-        {
-          to: '0x04c5772d1914fe6ce891b64eb35bf3522aeae1315647314aac58b01137607f3f',
-          entrypoint:
-            '0x00e5b455a836c7a254df57ed39d023d46b641b331162c6c0b369647056655409',
-          calldata: [
+        ],
+        [
+          '0x04c5772d1914fe6ce891b64eb35bf3522aeae1315647314aac58b01137607f3f',
+          '0x00e5b455a836c7a254df57ed39d023d46b641b331162c6c0b369647056655409',
+          [
             '455448',
             address,
-            new BigNumber(starkAmount.low).toString(16),
-            new BigNumber(starkAmount.high).toString(16),
+            '0x' + new BigNumber(starkAmount.low).toString(16),
+            '0x' + new BigNumber(starkAmount.high).toString(16),
           ],
-        },
+        ],
       ];
-
       const response = await sendTransaction(reownConfig, {
         chainId: 1381192787,
         account: address,
         to: address,
         value: parseEther('0'),
-        data: prepareMulticallCalldata(withdrawCalldata),
+        data: calldataWithEncode(withdrawCalldata),
         gasLimit: 90000,
         type: 'eip1559',
       });

@@ -13,7 +13,6 @@ import {
 } from '@chakra-ui/react';
 import { getStarknetAddress } from '../../utils/starknetUtils';
 import { parseEther } from 'ethers';
-import addRosettanetXSTRK from '../../components/addRosettanetxSTRK';
 
 const starkgateSepoliaAbi = [
   {
