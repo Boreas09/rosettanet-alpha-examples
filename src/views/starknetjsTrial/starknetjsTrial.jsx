@@ -12,12 +12,12 @@ import {
   Link,
   Divider,
 } from '@chakra-ui/react';
-import { connect } from '@starknet-io/get-starknet';
 import { parseEther, AbiCoder } from 'ethers';
 import BigNumber from 'bignumber.js';
 import { getStarknetAddress } from '../../utils/starknetUtils';
 import { CodeBlock, dracula } from 'react-code-blocks';
 import { ENDURLST_ABI } from './endurLSTABI.js';
+import { connect } from '@starknet-io/get-starknet';
 
 const snTx = {
   type: 'INVOKE_FUNCTION',
