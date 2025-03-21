@@ -22,6 +22,7 @@ export async function getStarknetAddress(address) {
   const addr = await rosettaContract.get_starknet_address_with_fallback(
     address
   );
+  const addressSN = '0x' + (await addr.toString(16));
 
-  return addr;
+  return addressSN;
 }
