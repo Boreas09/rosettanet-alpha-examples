@@ -11,6 +11,8 @@ import {
   Stack,
   Link,
   Divider,
+  Card,
+  CardBody,
 } from '@chakra-ui/react';
 import { parseEther, AbiCoder } from 'ethers';
 import BigNumber from 'bignumber.js';
@@ -18,6 +20,7 @@ import { getStarknetAddress } from '../../utils/starknetUtils';
 import { CodeBlock, dracula } from 'react-code-blocks';
 import { ENDURLST_ABI } from './endurLSTABI.js';
 import { connect } from '@starknet-io/get-starknet';
+import { calldataWithEncode } from '../../utils/multicall.js';
 
 const snTx = {
   type: 'INVOKE_FUNCTION',
@@ -66,11 +69,12 @@ const snTx = {
 
 const node = 'http://localhost:3000';
 
-// http://localhost:3000
+// https://alpha-deployment.rosettanet.io
 
 export default function StarknetjsTrial() {
   const [walletName, setWalletName] = useState('');
   const [selectedAccount, setSelectedAccount] = useState(null);
+  const [transactions, setTransactions] = useState([]);
   const [executeResult, setExecuteResult] = useState('');
   const [endurResult, setEndurResult] = useState('');
   const [callMethodResults, setCallMethodResults] = useState({
@@ -678,7 +682,7 @@ export default function StarknetjsTrial() {
 
     if (rAccount) {
       const unsignedTx = {
-        to: '0xaa79a8e98e1C8Fac6Fe4DD0e677d01BF1CA5f419',
+        to: '0x1e495b498736bBa9d2CbE8dabA652058d46B2d5a',
         value: '0xDE0B6B3A7640000',
         from: rAccount.address,
         data: '0x',
@@ -686,6 +690,7 @@ export default function StarknetjsTrial() {
       try {
         await rAccount.sendTransactionRosettanet(unsignedTx).then(res => {
           console.log(res);
+          setTransactions(prevData => [...prevData, res]);
         });
       } catch (e) {
         console.log(e);
@@ -693,7 +698,7 @@ export default function StarknetjsTrial() {
     }
   }
 
-  async function xStrk() {
+  async function Avnu() {
     let rAccount;
     if (selectedAccount) {
       rAccount = await RosettanetAccount.connect(
@@ -713,44 +718,50 @@ export default function StarknetjsTrial() {
 
     if (rAccount) {
       const snAddress = await getStarknetAddress(rAccount.address);
-      const starkAmount = cairo.uint256(parseEther('1'));
 
-      const encoder = new AbiCoder();
+      const getQuotes = await fetch(
+        'https://sepolia.api.avnu.fi/swap/v2/quotes?sellTokenAddress=0x4718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d&buyTokenAddress=0x49d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7&sellAmount=0xDE0B6B3A7640000'
+      );
+      const getQuotesResponse = await getQuotes.json();
+      const quoteId = getQuotesResponse[0].quoteId;
+
+      const postBody = {
+        quoteId: quoteId,
+        takerAddress: snAddress.toString(16),
+        slippage: '0.05',
+        includeApprove: true,
+      };
+
+      const buildSwapData = await fetch(
+        'https://sepolia.api.avnu.fi/swap/v2/build',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(postBody),
+        }
+      );
+
+      const buildSwapDataResponse = await buildSwapData.json();
 
       const calldataDecoded = [
         [
-          [
-            '0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d',
-            '0x0219209e083275171774dab1df80982e9df2096516f06319c5c6d71ae0a8480c',
-            [
-              '0x042de5b868da876768213c48019b8d46cd484e66013ae3275f8a4b97b31fc7eb',
-              '0x' + new BigNumber(starkAmount.low).toString(16),
-              '0x' + new BigNumber(starkAmount.high).toString(16),
-            ],
-          ],
-          [
-            '0x042de5b868da876768213c48019b8d46cd484e66013ae3275f8a4b97b31fc7eb',
-            '0x00c73f681176fc7b3f9693986fd7b14581e8d540519e27400e88b8713932be01',
-            [
-              '0x' + new BigNumber(starkAmount.low).toString(16),
-              '0x' + new BigNumber(starkAmount.high).toString(16),
-              snAddress,
-            ],
-          ],
+          '0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d',
+          '0x0219209e083275171774dab1df80982e9df2096516f06319c5c6d71ae0a8480c',
+          buildSwapDataResponse.calls[0].calldata,
+        ],
+        [
+          '0x2c56e8b00dbe2a71e57472685378fc8988bba947e9a99b26a00fade2b4fe7c2',
+          '0x01171593aa5bdadda4d6b0efde6cc94ee7649c3163d5efeb19da6c16d63a2a63',
+          buildSwapDataResponse.calls[1].calldata,
         ],
       ];
-
-      const calldataEncoded = encoder.encode(
-        ['tuple(uint256,uint256,uint256[])[]'],
-        calldataDecoded
-      );
-
-      const calldata = '0x76971d7f' + calldataEncoded.replace('0x', '');
 
       const unsignedTx = {
         from: rAccount.address,
         to: rAccount.address,
-        data: calldata,
+        data: calldataWithEncode(calldataDecoded),
         value: '0x0',
       };
 
@@ -759,6 +770,7 @@ export default function StarknetjsTrial() {
 
         await rAccount.sendTransactionRosettanet(unsignedTx).then(res => {
           console.log(res);
+          setTransactions(prevData => [...prevData, res]);
         });
       } catch (e) {
         console.log(e);
@@ -786,7 +798,7 @@ export default function StarknetjsTrial() {
 
     if (rAccount) {
       try {
-        await rAccount.switchChainRosettanet().then(res => {
+        await rAccount.switchStarknetChain('0x52535453').then(res => {
           console.log(res);
         });
       } catch (e) {
@@ -816,35 +828,52 @@ export default function StarknetjsTrial() {
     if (rAccount) {
       try {
         const snAddress = await getStarknetAddress(rAccount.address);
-        const starkAmount = cairo.uint256(parseEther('1'));
+
+        const getQuotes = await fetch(
+          'https://sepolia.api.avnu.fi/swap/v2/quotes?sellTokenAddress=0x4718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d&buyTokenAddress=0x49d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7&sellAmount=0xDE0B6B3A7640000'
+        );
+        const getQuotesResponse = await getQuotes.json();
+        const quoteId = getQuotesResponse[0].quoteId;
+
+        const postBody = {
+          quoteId: quoteId,
+          takerAddress: snAddress.toString(16),
+          slippage: '0.05',
+          includeApprove: true,
+        };
+
+        const buildSwapData = await fetch(
+          'https://sepolia.api.avnu.fi/swap/v2/build',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(postBody),
+          }
+        );
+
+        const buildSwapDataResponse = await buildSwapData.json();
 
         const calldataDecoded = [
-          {
-            contractAddress:
-              '0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d',
-            entrypoint:
-              '0x0219209e083275171774dab1df80982e9df2096516f06319c5c6d71ae0a8480c',
-            calldata: [
-              '0x042de5b868da876768213c48019b8d46cd484e66013ae3275f8a4b97b31fc7eb',
-              '0x' + new BigNumber(starkAmount.low).toString(16),
-              '0x' + new BigNumber(starkAmount.high).toString(16),
-            ],
-          },
-          {
-            contractAddress:
-              '0x042de5b868da876768213c48019b8d46cd484e66013ae3275f8a4b97b31fc7eb',
-            entrypoint:
-              '0x00c73f681176fc7b3f9693986fd7b14581e8d540519e27400e88b8713932be01',
-            calldata: [
-              '0x' + new BigNumber(starkAmount.low).toString(16),
-              '0x' + new BigNumber(starkAmount.high).toString(16),
-              snAddress,
-            ],
-          },
+          [
+            '0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d',
+            '0x0219209e083275171774dab1df80982e9df2096516f06319c5c6d71ae0a8480c',
+            buildSwapDataResponse.calls[0].calldata,
+          ],
+          [
+            '0x2c56e8b00dbe2a71e57472685378fc8988bba947e9a99b26a00fade2b4fe7c2',
+            '0x01171593aa5bdadda4d6b0efde6cc94ee7649c3163d5efeb19da6c16d63a2a63',
+            buildSwapDataResponse.calls[1].calldata,
+          ],
         ];
+
+        console.log(calldataDecoded);
+
         await rAccount.execute(calldataDecoded).then(res => {
           console.log(res);
-          setExecuteResult(res);
+          setExecuteResult(res.transaction_hash);
+          setTransactions(prevData => [...prevData, res.transaction_hash]);
         });
       } catch (e) {
         console.log(e);
@@ -966,7 +995,8 @@ export default function StarknetjsTrial() {
       const lstStake = await lstContract.asset();
 
       console.log('0x' + new BigNumber(lstStake).toString(16));
-      setEndurResult('0x' + new BigNumber(lstStake).toString(16));
+      const res = '0x' + new BigNumber(lstStake).toString(16);
+      setEndurResult(res);
     }
   }
 
@@ -1037,7 +1067,7 @@ export default function StarknetjsTrial() {
         </Button>
         <Button onClick={signMessage}>Sign Message</Button>
         <Button onClick={sendTransaction}>Send 1 STRK</Button>
-        <Button onClick={xStrk}>xSTRK</Button>
+        <Button onClick={Avnu}>Avnu</Button>
         <Button onClick={getPermission}>Get permissions</Button>
         <Button onClick={declare}>Declare</Button>
         <Button onClick={deploy}>Deploy</Button>
@@ -1049,6 +1079,25 @@ export default function StarknetjsTrial() {
       <Divider mt={10} mb={10} style={{ borderColor: 'black' }} />
       <Text>Wallet Name : {walletName}</Text>
       <Divider mt={10} mb={10} style={{ borderColor: 'black' }} />
+      {transactions.map((tx, index) => (
+        <Card key={tx} size={'sm'} borderRadius={'lg'} my={5}>
+          <CardBody size={'sm'}>
+            <Stack>
+              <Text fontSize={'sm'} fontWeight={'bold'}>
+                Transaction {index + 1}
+              </Text>
+              <Text fontSize={'sm'}>Transaction Hash: {tx}</Text>
+              <Link
+                fontSize={'sm'}
+                href={`https://sepolia.voyager.online/tx/${tx}`}
+                isExternal
+              >
+                View on Voyager
+              </Link>
+            </Stack>
+          </CardBody>
+        </Card>
+      ))}
       <Box>
         <Text fontSize="lg" as="b">
           StarknetJS Wallet Account Methods

@@ -48,7 +48,6 @@ export default function Avnu() {
     }
 
     try {
-      // sell eth get strk
       const snAddress = await getStarknetAddress(address);
 
       const getQuotes = await fetch(
@@ -59,7 +58,7 @@ export default function Avnu() {
 
       const postBody = {
         quoteId: quoteId,
-        takerAddress: '0x' + snAddress.toString(16),
+        takerAddress: snAddress.toString(16),
         slippage: '0.05',
         includeApprove: true,
       };
@@ -116,6 +115,48 @@ export default function Avnu() {
     }
   }
 
+  async function deneme() {
+    setLoading(true);
+
+    if (!address) {
+      toast({
+        title: 'Please Connect Your Wallet.',
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+      });
+      setLoading(false);
+      return;
+    }
+
+    if (chainId !== 1381192787) {
+      toast({
+        title: 'Please connect with RosettaNet Chain.',
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+      });
+      setLoading(false);
+      return;
+    }
+
+    try {
+    } catch (e) {
+      console.error(e);
+      toast({
+        title: 'Error',
+        description: JSON.stringify(e),
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+        containerStyle: {
+          height: '80px',
+        },
+      });
+    } finally {
+      setLoading(false);
+    }
+  }
   return (
     <Container maxW="3xl" overflow={'hidden'}>
       <Text fontSize={'lg'} fontWeight={'bold'}>

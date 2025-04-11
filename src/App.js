@@ -36,10 +36,10 @@ const router = createBrowserRouter([
         path: 'unruggable',
         element: <Unruggable />,
       },
-      {
-        path: 'endurLst',
-        element: <EndurLst />,
-      },
+      // {
+      //   path: 'endurLst',
+      //   element: <EndurLst />,
+      // },
       {
         path: 'currentStatus',
         element: <CurrStatus />,

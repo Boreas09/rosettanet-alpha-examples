@@ -6,7 +6,7 @@ export async function getStarknetAddress(address) {
   });
 
   const contractAddress =
-    '0x007288a71619eca9397bf0d3066d236b41de33fd6af3a420d16b2f55c93f8af7';
+    '0x06c5d28b29809c2481ff8ae65555bf6a30f161aa2a0dcd8f8189bba61e010d65';
 
   const { abi: testAbi } = await starknetProvider.getClassAt(contractAddress);
   if (testAbi === undefined) {

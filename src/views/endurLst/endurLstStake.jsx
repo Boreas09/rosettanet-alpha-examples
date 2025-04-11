@@ -31,7 +31,7 @@ export default function EndurLstStake() {
   const handleStake = async () => {
     setLoading(true);
 
-    const snAddress = '0x' + (await getStarknetAddress(address)).toString(16);
+    const snAddress = (await getStarknetAddress(address)).toString(16);
 
     if (!address) {
       toast({
@@ -77,6 +77,10 @@ export default function EndurLstStake() {
           ],
         ],
       ];
+
+      console.log(snAddress);
+      console.log('calldata:', calldata);
+      console.log('encoded', calldataWithEncode(calldata));
 
       const response = await sendTransaction(reownConfig, {
         chainId: 1381192787,

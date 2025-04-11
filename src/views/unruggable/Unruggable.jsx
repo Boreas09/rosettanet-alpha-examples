@@ -93,7 +93,7 @@ export default function Unruggable() {
         '0x00494a72a742b7880725a965ee487d937fa6d08a94ba4eb9e29dd0663bc653a2',
         '0x014b9c006653b96dd1312a62b5921c465d08352de1546550f0ed804fcc0ef9e9',
         [
-          '0x' + snAddress.toString(16),
+          snAddress,
           '0x' + asciiToHex(tokenName),
           '0x' + asciiToHex(tokenSymbol),
           '0x' + initialSupplyUint256.low.toString(16),

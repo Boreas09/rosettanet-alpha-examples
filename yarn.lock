@@ -11527,9 +11527,9 @@ stackframe@^1.3.4:
   resolved "https://registry.yarnpkg.com/stackframe/-/stackframe-1.3.4.tgz#b881a004c8c149a5e8efef37d51b16e412943310"
   integrity sha512-oeVtt7eWQS+Na6F//S4kJ2K2VbRlS9D43mAlMyVpVWovy9o+jfgH8O9agzANzaiLjclA0oYzUXEM4PurhSUChw==
 
-"starknet@github:Boreas09/starknet.js#rosettanet-support":
+starknet@Boreas09/starknet.js#rosettanet-support:
   version "6.24.0"
-  resolved "https://codeload.github.com/Boreas09/starknet.js/tar.gz/b67d7e0265cca3f64179360873c8093b033293cd"
+  resolved "https://codeload.github.com/Boreas09/starknet.js/tar.gz/abdd37e1a04a663a6e5b69a85770c7a736239a12"
   dependencies:
     "@noble/curves" "1.7.0"
     "@noble/hashes" "1.6.0"

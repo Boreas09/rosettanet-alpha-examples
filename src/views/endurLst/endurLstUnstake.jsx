@@ -30,7 +30,7 @@ export default function EndurLstUnstake() {
   const handleUnstake = async () => {
     setLoading(true);
 
-    const snAddress = '0x' + (await getStarknetAddress(address)).toString(16);
+    const snAddress = (await getStarknetAddress(address)).toString(16);
 
     if (!address) {
       toast({
