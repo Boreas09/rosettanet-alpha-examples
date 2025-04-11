@@ -14,7 +14,7 @@ const rosettanetSepolia = {
   name: 'Rosettanet',
   nativeCurrency: { name: 'Starknet Token', symbol: 'STRK', decimals: 18 },
   rpcUrls: {
-    default: { http: ['https://alpha-deployment.rosettanet.io'] },
+    default: { http: ['https://rosettanet.onrender.com/'] },
   },
   blockExplorers: {
     default: { name: 'Voyager', url: 'https://sepolia.voyager.online' },

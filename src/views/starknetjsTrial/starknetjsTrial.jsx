@@ -67,9 +67,10 @@ const snTx = {
   feeDataAvailabilityMode: 'L1',
 };
 
-const node = 'http://localhost:3000';
+const node = 'https://rosettanet.onrender.com/';
 
 // https://alpha-deployment.rosettanet.io
+// http://localhost:3000/
 
 export default function StarknetjsTrial() {
   const [walletName, setWalletName] = useState('');

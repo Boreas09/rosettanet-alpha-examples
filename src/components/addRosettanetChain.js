@@ -24,7 +24,7 @@ export default function AddRosettanetChain() {
                 name: 'STRK',
                 symbol: 'STRK',
               },
-              rpcUrls: ['https://alpha-deployment.rosettanet.io'],
+              rpcUrls: ['https://rosettanet.onrender.com/'],
             },
           ],
         });

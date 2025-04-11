@@ -15,6 +15,10 @@ export default function Home() {
       <Heading as="h2" size="lg" my={4}>
         This is a webpage for BETA testing RosettaNet.
       </Heading>
+      <Heading as="h2" size="lg" my={4}>
+        First Transaction Requests Could Be Slow Due to Backend
+        Provider.(Render.com)
+      </Heading>
       <Box py={6}>
         <Link
           href="https://github.com/Digine-Labs/rosettanet"
