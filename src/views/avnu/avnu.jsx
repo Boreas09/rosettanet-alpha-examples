@@ -92,7 +92,7 @@ export default function Avnu() {
       const response = await sendTransaction(reownConfig, {
         chainId: 1381192787,
         account: address,
-        to: address,
+        to: "0x0000000000000000000000004645415455524553",
         value: parseEther('0'),
         data: calldataWithEncode(calldata),
       });
@@ -115,48 +115,6 @@ export default function Avnu() {
     }
   }
 
-  async function deneme() {
-    setLoading(true);
-
-    if (!address) {
-      toast({
-        title: 'Please Connect Your Wallet.',
-        status: 'error',
-        duration: 9000,
-        isClosable: true,
-      });
-      setLoading(false);
-      return;
-    }
-
-    if (chainId !== 1381192787) {
-      toast({
-        title: 'Please connect with RosettaNet Chain.',
-        status: 'error',
-        duration: 9000,
-        isClosable: true,
-      });
-      setLoading(false);
-      return;
-    }
-
-    try {
-    } catch (e) {
-      console.error(e);
-      toast({
-        title: 'Error',
-        description: JSON.stringify(e),
-        status: 'error',
-        duration: 9000,
-        isClosable: true,
-        containerStyle: {
-          height: '80px',
-        },
-      });
-    } finally {
-      setLoading(false);
-    }
-  }
   return (
     <Container maxW="3xl" overflow={'hidden'}>
       <Text fontSize={'lg'} fontWeight={'bold'}>

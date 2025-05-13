@@ -107,7 +107,7 @@ export default function Unruggable() {
       const response = await sendTransaction(reownConfig, {
         chainId: 1381192787,
         account: address,
-        to: address,
+        to: "0x0000000000000000000000004645415455524553",
         value: parseEther('0'),
         data: calldataWithEncode(createMemecoinCalldata),
       });

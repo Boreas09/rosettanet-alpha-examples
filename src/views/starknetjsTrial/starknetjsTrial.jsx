@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Contract, RosettanetAccount, WalletAccount } from 'starknet';
 import {
   Box,
   Container,
@@ -20,6 +19,7 @@ import { CodeBlock, dracula } from 'react-code-blocks';
 import { ENDURLST_ABI } from './endurLSTABI.js';
 import { connect } from '@starknet-io/get-starknet';
 import { calldataWithEncode } from '../../utils/multicall.js';
+import { RosettanetAccount,WalletAccount,Contract } from 'starknet';
 
 const snTx = {
   type: 'INVOKE_FUNCTION',
@@ -755,7 +755,7 @@ export default function StarknetjsTrial() {
 
       const unsignedTx = {
         from: rAccount.address,
-        to: rAccount.address,
+        to: "0x0000000000000000000000004645415455524553",
         data: calldataWithEncode(calldataDecoded),
         value: '0x0',
       };
@@ -1066,6 +1066,24 @@ export default function StarknetjsTrial() {
       <Divider mt={10} mb={10} style={{ borderColor: 'black' }} />
       <Text>Wallet Name : {walletName}</Text>
       <Divider mt={10} mb={10} style={{ borderColor: 'black' }} />
+      <Box>
+          <Text>
+            Execute Function Result:
+            <Link
+              fontSize={'sm'}
+              href={`https://sepolia.voyager.online/tx/${executeResult}`}
+              isExternal
+            >
+              {executeResult}
+            </Link>
+          </Text>
+          <Text>Declare Function Result: Not Available in Rosettanet</Text>
+          <Text>Deploy Function Result: Not Available in Rosettanet</Text>
+          <Text>
+            Endur LST Contract Call (read call asset()) Result : {endurResult}
+          </Text>
+        </Box>
+      <Divider mt={10} mb={10} style={{ borderColor: 'black' }} />
       {transactions.map((tx, index) => (
         <Card key={tx} size={'sm'} borderRadius={'lg'} my={5}>
           <CardBody size={'sm'}>
@@ -1113,23 +1131,7 @@ export default function StarknetjsTrial() {
             theme={dracula}
           />
         </Box>
-        <Box>
-          <Text>
-            Execute Function Result:
-            <Link
-              fontSize={'sm'}
-              href={`https://sepolia.voyager.online/tx/${executeResult}`}
-              isExternal
-            >
-              {executeResult}
-            </Link>
-          </Text>
-          <Text>Declare Function Result: Not Available in Rosettanet</Text>
-          <Text>Deploy Function Result: Not Available in Rosettanet</Text>
-          <Text>
-            Endur LST Contract Call (read call asset()) Result : {endurResult}
-          </Text>
-        </Box>
+
       </Box>
       <Divider mt={10} mb={10} style={{ borderColor: 'black' }} />
       <Stack flexDirection={'row'} flexWrap={'wrap'}>
@@ -1149,3 +1151,5 @@ export default function StarknetjsTrial() {
     </Container>
   );
 }
+
+
