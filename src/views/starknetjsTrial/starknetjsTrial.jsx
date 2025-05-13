@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Contract, RosettanetAccount, cairo } from 'starknet';
+import { Contract, RosettanetAccount, WalletAccount } from 'starknet';
 import {
   Box,
   Container,
@@ -14,7 +14,6 @@ import {
   Card,
   CardBody,
 } from '@chakra-ui/react';
-import { parseEther, AbiCoder } from 'ethers';
 import BigNumber from 'bignumber.js';
 import { getStarknetAddress } from '../../utils/starknetUtils';
 import { CodeBlock, dracula } from 'react-code-blocks';
@@ -68,6 +67,7 @@ const snTx = {
 };
 
 const node = 'https://rosettanet.onrender.com/';
+const nodeStrk = "https://starknet-sepolia.public.blastapi.io/rpc/v0_7"
 
 // https://alpha-deployment.rosettanet.io
 // http://localhost:3000/
@@ -136,12 +136,7 @@ export default function StarknetjsTrial() {
     let rAccount;
 
     if (selectedAccount) {
-      rAccount = await RosettanetAccount.connect(
-        {
-          nodeUrl: node,
-        },
-        selectedAccount
-      );
+      rAccount = await RosettanetAccount.connect({ nodeUrl: node }, selectedAccount)
     } else {
       toast({
         title: 'Disconnect from left menu and connect with get-starknet.',
@@ -322,11 +317,10 @@ export default function StarknetjsTrial() {
   async function getStarknetJSCallMethods() {
     let rAccount;
     if (selectedAccount) {
-      rAccount = await RosettanetAccount.connect(
-        {
-          nodeUrl: node,
-        },
-        selectedAccount
+      rAccount = await (
+        typeof selectedAccount.sendAsync === 'function' && typeof selectedAccount.send === 'function'
+          ? RosettanetAccount.connect({ nodeUrl: node }, selectedAccount)
+          : WalletAccount.connect({ nodeUrl: node }, selectedAccount)
       );
     } else {
       toast({
@@ -337,7 +331,7 @@ export default function StarknetjsTrial() {
       });
     }
     try {
-      const snAddress = await getStarknetAddress(rAccount.address);
+      const snAddress = await getStarknetAddress(rAccount.address)
 
       await rAccount.getChainId().then(res => {
         console.log(res);
@@ -563,11 +557,10 @@ export default function StarknetjsTrial() {
   async function signMessage() {
     let rAccount;
     if (selectedAccount) {
-      rAccount = await RosettanetAccount.connect(
-        {
-          nodeUrl: node,
-        },
-        selectedAccount
+      rAccount = await (
+        typeof selectedAccount.sendAsync === 'function' && typeof selectedAccount.send === 'function'
+          ? RosettanetAccount.connect({ nodeUrl: node }, selectedAccount)
+          : WalletAccount.connect({ nodeUrl: nodeStrk }, selectedAccount)
       );
     } else {
       toast({
@@ -666,11 +659,10 @@ export default function StarknetjsTrial() {
     let rAccount;
 
     if (selectedAccount) {
-      rAccount = await RosettanetAccount.connect(
-        {
-          nodeUrl: node,
-        },
-        selectedAccount
+      rAccount = await (
+        typeof selectedAccount.sendAsync === 'function' && typeof selectedAccount.send === 'function'
+          ? RosettanetAccount.connect({ nodeUrl: node }, selectedAccount)
+          : WalletAccount.connect({ nodeUrl: nodeStrk }, selectedAccount)
       );
     } else {
       toast({
@@ -702,12 +694,14 @@ export default function StarknetjsTrial() {
   async function Avnu() {
     let rAccount;
     if (selectedAccount) {
-      rAccount = await RosettanetAccount.connect(
-        {
-          nodeUrl: node,
-        },
-        selectedAccount
+
+      rAccount = await (
+        typeof selectedAccount.sendAsync === 'function' && typeof selectedAccount.send === 'function'
+          ? RosettanetAccount.connect({ nodeUrl: node }, selectedAccount)
+          : WalletAccount.connect({ nodeUrl: nodeStrk }, selectedAccount)
       );
+      
+      console.log(rAccount)
     } else {
       toast({
         title: 'Disconnect from left menu and connect with get-starknet.',
@@ -782,11 +776,10 @@ export default function StarknetjsTrial() {
   async function changetoRosettanet() {
     let rAccount;
     if (selectedAccount) {
-      rAccount = await RosettanetAccount.connect(
-        {
-          nodeUrl: node,
-        },
-        selectedAccount
+      rAccount = await (
+        typeof selectedAccount.sendAsync === 'function' && typeof selectedAccount.send === 'function'
+          ? RosettanetAccount.connect({ nodeUrl: node }, selectedAccount)
+          : WalletAccount.connect({ nodeUrl: nodeStrk }, selectedAccount)
       );
     } else {
       toast({
@@ -811,11 +804,10 @@ export default function StarknetjsTrial() {
   async function execute() {
     let rAccount;
     if (selectedAccount) {
-      rAccount = await RosettanetAccount.connect(
-        {
-          nodeUrl: node,
-        },
-        selectedAccount
+      rAccount = await (
+        typeof selectedAccount.sendAsync === 'function' && typeof selectedAccount.send === 'function'
+          ? RosettanetAccount.connect({ nodeUrl: node }, selectedAccount)
+          : WalletAccount.connect({ nodeUrl: nodeStrk }, selectedAccount)
       );
     } else {
       toast({
@@ -828,7 +820,7 @@ export default function StarknetjsTrial() {
 
     if (rAccount) {
       try {
-        const snAddress = await getStarknetAddress(rAccount.address);
+        const snAddress = await getStarknetAddress(rAccount.address)
 
         const getQuotes = await fetch(
           'https://sepolia.api.avnu.fi/swap/v2/quotes?sellTokenAddress=0x4718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d&buyTokenAddress=0x49d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7&sellAmount=0xDE0B6B3A7640000'
@@ -838,7 +830,7 @@ export default function StarknetjsTrial() {
 
         const postBody = {
           quoteId: quoteId,
-          takerAddress: snAddress.toString(16),
+          takerAddress: snAddress,
           slippage: '0.05',
           includeApprove: true,
         };
@@ -885,11 +877,10 @@ export default function StarknetjsTrial() {
   async function declare() {
     let rAccount;
     if (selectedAccount) {
-      rAccount = await RosettanetAccount.connect(
-        {
-          nodeUrl: node,
-        },
-        selectedAccount
+      rAccount = await (
+        typeof selectedAccount.sendAsync === 'function' && typeof selectedAccount.send === 'function'
+          ? RosettanetAccount.connect({ nodeUrl: node }, selectedAccount)
+          : WalletAccount.connect({ nodeUrl: nodeStrk }, selectedAccount)
       );
     } else {
       toast({
@@ -914,11 +905,10 @@ export default function StarknetjsTrial() {
   async function deploy() {
     let rAccount;
     if (selectedAccount) {
-      rAccount = await RosettanetAccount.connect(
-        {
-          nodeUrl: node,
-        },
-        selectedAccount
+      rAccount = await (
+        typeof selectedAccount.sendAsync === 'function' && typeof selectedAccount.send === 'function'
+          ? RosettanetAccount.connect({ nodeUrl: node }, selectedAccount)
+          : WalletAccount.connect({ nodeUrl: nodeStrk }, selectedAccount)
       );
     } else {
       toast({
@@ -943,11 +933,10 @@ export default function StarknetjsTrial() {
   async function getPermission() {
     let rAccount;
     if (selectedAccount) {
-      rAccount = await RosettanetAccount.connect(
-        {
-          nodeUrl: node,
-        },
-        selectedAccount
+      rAccount = await (
+        typeof selectedAccount.sendAsync === 'function' && typeof selectedAccount.send === 'function'
+          ? RosettanetAccount.connect({ nodeUrl: node }, selectedAccount)
+          : WalletAccount.connect({ nodeUrl: nodeStrk }, selectedAccount)
       );
     } else {
       toast({
@@ -971,11 +960,10 @@ export default function StarknetjsTrial() {
   async function getEndurWithContractCall() {
     let rAccount;
     if (selectedAccount) {
-      rAccount = await RosettanetAccount.connect(
-        {
-          nodeUrl: node,
-        },
-        selectedAccount
+      rAccount = await (
+        typeof selectedAccount.sendAsync === 'function' && typeof selectedAccount.send === 'function'
+          ? RosettanetAccount.connect({ nodeUrl: node }, selectedAccount)
+          : WalletAccount.connect({ nodeUrl: nodeStrk }, selectedAccount)
       );
     } else {
       toast({
@@ -1003,11 +991,10 @@ export default function StarknetjsTrial() {
 
   const code1 = `let rAccount;
     if (selectedAccount) {
-      rAccount = await RosettanetAccount.connect(
-        {
-          nodeUrl: node,
-        },
-        selectedAccount
+      rAccount = await (
+        typeof selectedAccount.sendAsync === 'function' && typeof selectedAccount.send === 'function'
+          ? RosettanetAccount.connect({ nodeUrl: node }, selectedAccount)
+          : WalletAccount.connect({ nodeUrl: nodeStrk }, selectedAccount)
       );
     }
       
@@ -1018,11 +1005,10 @@ export default function StarknetjsTrial() {
   const code2 = ` async function getEndurWithContractCall() {
     let rAccount;
     if (selectedAccount) {
-      rAccount = await RosettanetAccount.connect(
-        {
-          nodeUrl: node,
-        },
-        selectedAccount
+      rAccount = await (
+        typeof selectedAccount.sendAsync === 'function' && typeof selectedAccount.send === 'function'
+          ? RosettanetAccount.connect({ nodeUrl: node }, selectedAccount)
+          : WalletAccount.connect({ nodeUrl: nodeStrk }, selectedAccount)
       );
     }
 
