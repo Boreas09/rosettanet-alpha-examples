@@ -6,6 +6,7 @@
 .pnp.js
 /getstark/core/node_modules
 yarn.lock
+.yarn
 
 # testing
 /coverage
