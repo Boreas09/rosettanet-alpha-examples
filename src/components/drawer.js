@@ -126,7 +126,7 @@ export function FullOpenDrawer() {
         <NavItem to="/unruggable">Unruggable</NavItem>
         {/* <NavItem to="/endurLst">Endur LST xSTRK</NavItem> */}
         <NavItem to="/starknetJS">StarknetJS</NavItem>
-        {/* <NavItem to="/strkFarm">STRK Farm</NavItem> */}
+        <NavItem to="/ethers">Ethers</NavItem>
         <Flex
           px="4"
           py="4"

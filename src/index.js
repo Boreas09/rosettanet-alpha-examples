@@ -21,26 +21,26 @@ const rosettanetSepolia = {
   },
 };
 
-export const config = createConfig({
-  chains: [rosettanetSepolia, sepolia],
-  connectors: [
-    walletConnect({
-      projectId: '7e0b8c7d55dd9cad555623bf3c34da1c',
-      isNewChainsStale: true,
-      showQrModal: true,
-      metadata: {
-        name: 'Rosy',
-        description: 'Rosettanet Alpha Examples',
-        icons: ['https://assets.reown.com/reown-profile-pic.png'],
-      },
-    }),
-  ],
-  transports: {
-    [rosettanetSepolia.id]: http(),
-    [mainnet.id]: http(),
-    [sepolia.id]: http(),
-  },
-});
+// export const config = createConfig({
+//   chains: [rosettanetSepolia, sepolia],
+//   connectors: [
+//     walletConnect({
+//       projectId: '7e0b8c7d55dd9cad555623bf3c34da1c',
+//       isNewChainsStale: true,
+//       showQrModal: true,
+//       metadata: {
+//         name: 'Rosy',
+//         description: 'Rosettanet Alpha Examples',
+//         icons: ['https://assets.reown.com/reown-profile-pic.png'],
+//       },
+//     }),
+//   ],
+//   transports: {
+//     [rosettanetSepolia.id]: http(),
+//     [mainnet.id]: http(),
+//     [sepolia.id]: http(),
+//   },
+// });
 
 const container = document.getElementById('root');
 const root = ReactDOM.createRoot(container);

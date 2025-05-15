@@ -11,16 +11,10 @@ const queryClient = new QueryClient();
 // 1. Get projectId from https://cloud.reown.com
 const projectId = '7e0b8c7d55dd9cad555623bf3c34da1c';
 
-// 2. Create a metadata object - optional
-// const metadata = {
-//   name: 'Rosy',
-//   description: 'Rosettanet Alpha Examples',
-//   url: 'https://rosettanet-alpha-examples.vercel.app/', // origin must match your domain & subdomain
-// };
 const metadata = {
   name: 'Rosy',
   description: 'AppKit Example',
-  url: 'https://rosettanet-alpha-examples.vercel.app/', // origin must match your domain & subdomain
+  url: 'http://localhost:4200', // origin must match your domain & subdomain
   icons: ['https://assets.reown.com/reown-profile-pic.png'],
 };
 
