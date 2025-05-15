@@ -1,5 +1,4 @@
 import { createAppKit } from '@reown/appkit/react';
-
 import { WagmiProvider } from 'wagmi';
 import { defineChain, sepolia } from '@reown/appkit/networks';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -9,13 +8,13 @@ import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
 const queryClient = new QueryClient();
 
 // 1. Get projectId from https://cloud.reown.com
-const projectId = '7e0b8c7d55dd9cad555623bf3c34da1c';
+const projectId = '26f04a72b999722f634c0d20ad88561d';
 
 const metadata = {
   name: 'Rosy',
-  description: 'AppKit Example',
-  url: 'http://localhost:4200', // origin must match your domain & subdomain
-  icons: ['https://assets.reown.com/reown-profile-pic.png'],
+  description: 'Rosettanet Alpha Examples',
+  url: 'https://rosettanet-alpha-examples.vercel.app/',
+  icons: ['https://rosettanet-alpha-examples.vercel.app/logo192.jpg'],
 };
 
 const rosettanetSepolia = defineChain({
