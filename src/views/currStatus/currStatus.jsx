@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-  Box,
-  Container,
-  Text,
-  Heading,
-  UnorderedList,
-  ListItem,
-} from '@chakra-ui/react';
+import { Box, Container, Text, Heading } from '@chakra-ui/react';
 
 export default function CurrStatus() {
   return (
@@ -20,52 +13,11 @@ export default function CurrStatus() {
           Wallets
         </Heading>
         <Text mb={4}>
-          Currently Metamask works perfectly with RosettaNet. We are trying to
-          make Trust Wallet and Coinbase Wallet compatible with RosettaNet.
-          Trust and Coinbase using legacy type transactions and our node does
-          not support legacy transactions.
+          Currently most of the wallets are working on Rosettanet. Metamask
+          working great. Trust Wallet unfortunately not working with RosettaNet,
+          we think they need to add Rosettanet Chain to their own cache. Phantom
+          Wallet is not allowing to add a new chain.
         </Text>
-
-        <Text fontWeight="bold" mb={2}>
-          MetaMask
-        </Text>
-        <UnorderedList mb={4}>
-          <ListItem>Can add RosettaNet Chain.</ListItem>
-          <ListItem>Can add RosettaNet ETH.</ListItem>
-          <ListItem>Can send Tx.</ListItem>
-        </UnorderedList>
-
-        <Text fontWeight="bold" mb={2}>
-          Trust Wallet
-        </Text>
-        <UnorderedList mb={4}>
-          <ListItem>Can add RosettaNet Chain.</ListItem>
-          <ListItem>Can add RosettaNet ETH.</ListItem>
-          <ListItem>
-            Can't sent Tx, Wallet gives unsupported chain error.
-          </ListItem>
-        </UnorderedList>
-
-        <Text fontWeight="bold" mb={2}>
-          Coinbase Wallet
-        </Text>
-        <UnorderedList mb={4}>
-          <ListItem>Can add RosettaNet Chain.</ListItem>
-          <ListItem>Can't add RosettaNet ETH.</ListItem>
-          <ListItem>
-            Can't sent Tx, needs to support legacy tx with multicall. Sending
-            STRK from Address 1 to Address 2 by Coinbase wallet works.
-          </ListItem>
-        </UnorderedList>
-
-        <Text fontWeight="bold" mb={2}>
-          Phantom Wallet
-        </Text>
-        <UnorderedList mb={4}>
-          <ListItem>
-            Can't add RosettaNet Chain. Wallet do not allow to add a new chain
-          </ListItem>
-        </UnorderedList>
 
         {/* Project Structure Section */}
         <Heading as="h2" size="lg" mb={4}>
@@ -91,11 +43,6 @@ export default function CurrStatus() {
           Works perfectly fine with RosettaNet. We can create a meme token using
           Metamask. Launching token will be added in a short time.
         </Text>
-
-        <Text fontWeight="bold" mb={2}>
-          Endur LST xSTRK
-        </Text>
-        <Text mb={4}>Works perfectly fine with RosettaNet.</Text>
       </Box>
     </Container>
   );
