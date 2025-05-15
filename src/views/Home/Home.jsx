@@ -8,6 +8,7 @@ import {
   ListItem,
   Link,
 } from '@chakra-ui/react';
+import { ExternalLinkIcon } from '@chakra-ui/icons';
 
 export default function Home() {
   return (
@@ -15,18 +16,24 @@ export default function Home() {
       <Heading as="h2" size="lg" my={4}>
         This is a webpage for BETA testing RosettaNet.
       </Heading>
-      <Heading as="h2" size="lg" my={4}>
+      <Heading as="h2" size="lg" mb={4}>
         First Transaction Requests Could Be Slow Due to Backend
         Provider.(Render.com)
       </Heading>
-      <Box py={6}>
+      <Box>
         <Link
           href="https://github.com/Digine-Labs/rosettanet"
           isExternal
           size="lg"
         >
-          <Heading as="h2" size="lg" my={4}>
+          <Heading as="h2" isExternal size="lg" mb={4}>
             Github Repository
+            <ExternalLinkIcon mx="2px" />
+          </Heading>
+        </Link>
+        <Link href="https://docs.rosettanet.io/" isExternal size="lg">
+          <Heading as="h2" size="lg" mb={4}>
+            Documents Page <ExternalLinkIcon mx="2px" />
           </Heading>
         </Link>
         {/* Overview Section */}
@@ -91,53 +98,6 @@ export default function Home() {
         <Text fontStyle="italic" mb={8}>
           Rosetta aims to give EVM experience to users where they won't ever
           notify they are using Starknet.
-        </Text>
-
-        {/* Project Structure Section */}
-        <Heading as="h2" size="lg" mb={4}>
-          Project structure
-        </Heading>
-
-        <Text fontWeight="bold" mb={2}>
-          RosettaNet:
-        </Text>
-        <Text mb={4}>
-          Middleware software, core part of Rosetta. It acts like a gateway
-          between Starknet and the user. It formats Ethereum RPC requests to the
-          format that Starknet RPC accepts, and formats Starknet RPC responses
-          into Ethereum RPC response. Written in Typescript. In future it also
-          will be developed with Rust.
-        </Text>
-
-        <Text fontWeight="bold" mb={2}>
-          Rosetta Accounts:
-        </Text>
-        <Text mb={4}>
-          Account smart contract library will be written in Cairo. Custom
-          account contracts that are able to verify Ethereum account signatures
-          on Starknet to execute and verify transactions.
-        </Text>
-
-        <Text fontWeight="bold" mb={2}>
-          Rosetta Verifier:
-        </Text>
-        <Text mb={4}>
-          Starknet smart contracts that verify signatures with format EIP-1559.
-          Converts EVM calldatas into Starknet calldata. This is the core part
-          to achieve non-trusted setup.
-        </Text>
-
-        <Text fontWeight="bold" mb={2}>
-          Lens:
-        </Text>
-        <Text mb={4}>
-          Permissionless Starknet smart contract that matches Ethereum addresses
-          with Starknet addresses.
-        </Text>
-
-        <Text fontStyle="italic">
-          *Additional extensions will be developed to provide integrability for
-          existing Starknet protocols.*
         </Text>
       </Box>
     </Container>

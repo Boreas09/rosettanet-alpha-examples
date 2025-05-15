@@ -10,7 +10,6 @@ import {
   Container,
   Input,
 } from '@chakra-ui/react';
-import { useAccount } from 'wagmi';
 import { ethers } from 'ethers';
 
 export default function Ethers() {
