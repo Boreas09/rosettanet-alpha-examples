@@ -19,7 +19,7 @@ import { CodeBlock, dracula } from 'react-code-blocks';
 import { ENDURLST_ABI } from './endurLSTABI.js';
 import { connect } from '@starknet-io/get-starknet';
 import { calldataWithEncode } from '../../utils/multicall.js';
-import { WalletAccount, Contract } from 'starknet';
+import { Contract, WalletAccount } from 'starknet';
 // import { RosettanetAccount } from 'starknet';
 import { RosettanetAccount } from 'rosettanet-starknetjs-impl';
 
