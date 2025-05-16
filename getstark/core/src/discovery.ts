@@ -14,24 +14,24 @@ export type WalletProvider = {
   name: string
   icon: string
   downloads:
-    | DownloadsRecord<
-        "chrome",
-        `https://chrome.google.com/webstore/detail/${string}`
-      >
-    | DownloadsRecord<
-        "firefox",
-        `https://addons.mozilla.org/en-US/firefox/addon/${string}`
-      >
-    | DownloadsRecord<
-        "edge",
-        `https://microsoftedge.microsoft.com/addons/detail/${string}`
-      >
-    | DownloadsRecord<"safari", `https://apps.apple.com/us/app/${string}`>
-    | DownloadsRecord<"ios", `https://apps.apple.com/us/app/${string}`>
-    | DownloadsRecord<
-        "android",
-        `https://play.google.com/store/apps/details?id=${string}`
-      >
+  | DownloadsRecord<
+    "chrome",
+    `https://chrome.google.com/webstore/detail/${string}`
+  >
+  | DownloadsRecord<
+    "firefox",
+    `https://addons.mozilla.org/en-US/firefox/addon/${string}`
+  >
+  | DownloadsRecord<
+    "edge",
+    `https://microsoftedge.microsoft.com/addons/detail/${string}`
+  >
+  | DownloadsRecord<"safari", `https://apps.apple.com/us/app/${string}`>
+  | DownloadsRecord<"ios", `https://apps.apple.com/us/app/${string}`>
+  | DownloadsRecord<
+    "android",
+    `https://play.google.com/store/apps/details?id=${string}`
+  >
 }
 
 const wallets: WalletProvider[] = [
@@ -60,8 +60,8 @@ const wallets: WalletProvider[] = [
     } as Record<BrowserStoreVersion | OperatingSystemStoreVersion, any>,
   },
   {
-    id: metaMaskVirtualWallet.id,
-    name: metaMaskVirtualWallet.name,
+    id: "metamasksnaps",
+    name: 'Metamask Snaps',
     icon: metaMaskVirtualWallet.icon,
     downloads: {
       chrome:

@@ -113,7 +113,7 @@ function createMetaMaskProviderWrapper(
   let metaMaskSnapWallet: IStarknetWindowObject | undefined;
   let fetchPromise: Promise<IStarknetWindowObject> | undefined = undefined;
   const metaMaskProviderWrapper: IStarknetWindowObject = {
-    id: walletInfo.id,
+    id: "metamasksnaps",
     name: 'Metamask Snaps',
     icon: walletInfo.icon,
     get version() {
@@ -181,7 +181,7 @@ async function injectMetamaskBridge(windowObject: Record<string, unknown>) {
     return;
   }
 
-  const metamaskWalletInfo = wallets.find(wallet => wallet.id === 'metamask');
+  const metamaskWalletInfo = wallets.find(wallet => wallet.id === 'metamasksnaps');
   if (!metamaskWalletInfo) {
     return;
   }

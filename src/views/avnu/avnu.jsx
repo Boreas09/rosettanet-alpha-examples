@@ -92,10 +92,11 @@ export default function Avnu() {
       const response = await sendTransaction(reownConfig, {
         chainId: 1381192787,
         account: address,
-        to: "0x0000000000000000000000004645415455524553",
+        to: '0x0000000000000000000000004645415455524553',
         value: parseEther('0'),
         data: calldataWithEncode(calldata),
       });
+
       console.log('Transaction sent:', response);
       setTransactions(prevData => [...prevData, response]);
     } catch (e) {
