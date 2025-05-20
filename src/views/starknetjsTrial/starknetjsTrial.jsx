@@ -12,6 +12,7 @@ import {
   Divider,
   Card,
   CardBody,
+  Input,
 } from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
 import { getStarknetAddress } from '../../utils/starknetUtils';
@@ -19,9 +20,10 @@ import { CodeBlock, dracula } from 'react-code-blocks';
 import { ENDURLST_ABI } from './endurLSTABI.js';
 import { connect } from '@starknet-io/get-starknet';
 import { calldataWithEncode } from '../../utils/multicall.js';
-import { Contract, WalletAccount } from 'starknet';
+import { Contract, WalletAccount, cairo } from 'starknet';
 // import { RosettanetAccount } from 'starknet';
 import { RosettanetAccount } from 'rosettanet-starknetjs-impl';
+import { asciiToHex } from '../../utils/asciiToHex';
 
 const snTx = {
   type: 'INVOKE_FUNCTION',
@@ -80,6 +82,11 @@ export default function StarknetjsTrial() {
   const [transactions, setTransactions] = useState([]);
   const [executeResult, setExecuteResult] = useState('');
   const [endurResult, setEndurResult] = useState('');
+  const [tokenName, setTokenName] = useState('');
+  const [tokenSymbol, setTokenSymbol] = useState('');
+  const [initialSupply, setInitialSupply] = useState('');
+  const [contractSalt, setContractSalt] = useState('');
+  const [loading, setLoading] = useState(false);
   const [callMethodResults, setCallMethodResults] = useState({
     blockNumber: '',
     chainId: '',
@@ -127,7 +134,7 @@ export default function StarknetjsTrial() {
 
   function handleConnect() {
     return async () => {
-      const res = await connect();
+      const res = await connect({ modalMode: 'alwaysAsk' });
       console.log(res);
       setWalletName(res?.name || '');
       setSelectedAccount(res);
@@ -335,7 +342,10 @@ export default function StarknetjsTrial() {
       });
     }
     try {
-      const snAddress = await getStarknetAddress(rAccount.address);
+      const snAddress = await (typeof selectedAccount.sendAsync ===
+        'function' && typeof selectedAccount.send === 'function'
+        ? getStarknetAddress(rAccount.address)
+        : rAccount.address);
 
       await rAccount.getChainId().then(res => {
         console.log(res);
@@ -712,7 +722,10 @@ export default function StarknetjsTrial() {
     }
 
     if (rAccount) {
-      const snAddress = await getStarknetAddress(rAccount.address);
+      const snAddress = await (typeof selectedAccount.sendAsync ===
+        'function' && typeof selectedAccount.send === 'function'
+        ? getStarknetAddress(rAccount.address)
+        : rAccount.address);
 
       const getQuotes = await fetch(
         'https://sepolia.api.avnu.fi/swap/v2/quotes?sellTokenAddress=0x4718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d&buyTokenAddress=0x49d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7&sellAmount=0xDE0B6B3A7640000'
@@ -818,7 +831,10 @@ export default function StarknetjsTrial() {
 
     if (rAccount) {
       try {
-        const snAddress = await getStarknetAddress(rAccount.address);
+        const snAddress = await (typeof selectedAccount.sendAsync ===
+          'function' && typeof selectedAccount.send === 'function'
+          ? getStarknetAddress(rAccount.address)
+          : rAccount.address);
 
         const getQuotes = await fetch(
           'https://sepolia.api.avnu.fi/swap/v2/quotes?sellTokenAddress=0x4718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d&buyTokenAddress=0x49d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7&sellAmount=0xDE0B6B3A7640000'
@@ -847,19 +863,20 @@ export default function StarknetjsTrial() {
         const buildSwapDataResponse = await buildSwapData.json();
 
         const calldataDecoded = [
-          [
-            '0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d',
-            '0x0219209e083275171774dab1df80982e9df2096516f06319c5c6d71ae0a8480c',
-            buildSwapDataResponse.calls[0].calldata,
-          ],
-          [
-            '0x2c56e8b00dbe2a71e57472685378fc8988bba947e9a99b26a00fade2b4fe7c2',
-            '0x01171593aa5bdadda4d6b0efde6cc94ee7649c3163d5efeb19da6c16d63a2a63',
-            buildSwapDataResponse.calls[1].calldata,
-          ],
+          {
+            contractAddress:
+              '0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d',
+            entrypoint: 'approve',
+            calldata: buildSwapDataResponse.calls[0].calldata,
+          },
+          {
+            contractAddress:
+              '0x2c56e8b00dbe2a71e57472685378fc8988bba947e9a99b26a00fade2b4fe7c2',
+            entrypoint: 'multi_route_swap',
+            calldata: buildSwapDataResponse.calls[1].calldata,
+          },
         ];
-
-        console.log(calldataDecoded);
+        console.log('calldata', calldataDecoded);
 
         await rAccount.execute(calldataDecoded).then(res => {
           console.log(res);
@@ -983,6 +1000,102 @@ export default function StarknetjsTrial() {
     }
   }
 
+  const unruggableExecute = async e => {
+    e.preventDefault();
+
+    setLoading(true);
+    let rAccount;
+    if (selectedAccount) {
+      rAccount = await (typeof selectedAccount.sendAsync === 'function' &&
+      typeof selectedAccount.send === 'function'
+        ? RosettanetAccount.connect({ nodeUrl: node }, selectedAccount)
+        : WalletAccount.connect({ nodeUrl: nodeStrk }, selectedAccount));
+    } else {
+      toast({
+        title: 'Disconnect from left menu and connect with get-starknet.',
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+      });
+    }
+
+    if (
+      tokenName.length > 30 ||
+      tokenSymbol.length > 30 ||
+      contractSalt.length > 30
+    ) {
+      toast({
+        title:
+          'Name, Symbol and Salt needs to be felt252. Less than 30 characters',
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    const initialSupplyUint256 = cairo.uint256(initialSupply);
+
+    if (
+      cairo.isTypeUint256([
+        new BigNumber(initialSupplyUint256.low, 16),
+        new BigNumber(initialSupplyUint256.high, 16),
+      ])
+    ) {
+      toast({
+        title: 'initialSupply needs to be Uint256.',
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    const snAddress = await (typeof selectedAccount.sendAsync === 'function' &&
+    typeof selectedAccount.send === 'function'
+      ? getStarknetAddress(rAccount.address)
+      : rAccount.address);
+
+    const createMemecoinCalldata = [
+      {
+        contractAddress:
+          '0x00494a72a742b7880725a965ee487d937fa6d08a94ba4eb9e29dd0663bc653a2',
+        entrypoint:
+          '0x014b9c006653b96dd1312a62b5921c465d08352de1546550f0ed804fcc0ef9e9',
+        calldata: [
+          snAddress,
+          '0x' + asciiToHex(tokenName),
+          '0x' + asciiToHex(tokenSymbol),
+          '0x' + initialSupplyUint256.low.toString(16),
+          '0x' + initialSupplyUint256.high.toString(16),
+          '0x' + asciiToHex(contractSalt),
+        ],
+      },
+    ];
+
+    try {
+      await rAccount.execute(createMemecoinCalldata).then(res => {
+        console.log(res);
+        setExecuteResult(res.transaction_hash);
+        setTransactions(prevData => [...prevData, res.transaction_hash]);
+      });
+    } catch (e) {
+      console.error(e);
+      toast({
+        title: 'Error',
+        description: JSON.stringify(e),
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+        containerStyle: {
+          height: '80px',
+        },
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const code1 = `let rAccount;
     if (selectedAccount) {
       rAccount = await (
@@ -1048,7 +1161,9 @@ export default function StarknetjsTrial() {
         </Button>
         <Button onClick={signMessage}>Sign Message</Button>
         <Button onClick={sendTransaction}>Send 1 STRK</Button>
-        <Button onClick={Avnu}>Avnu</Button>
+        <Button onClick={Avnu}>
+          Avnu With sendTransactionRosettanet() method
+        </Button>
         <Button onClick={getPermission}>Get permissions</Button>
         <Button onClick={declare}>Declare</Button>
         <Button onClick={deploy}>Deploy</Button>
@@ -1057,6 +1172,55 @@ export default function StarknetjsTrial() {
           Get Endur with Contract Call
         </Button>
       </Box>
+      <form onSubmit={unruggableExecute} style={{ marginTop: '1rem' }}>
+        <div style={{ marginBottom: '1rem' }}>
+          <Input
+            placeholder="Token Name"
+            aria-label="Token Name"
+            value={tokenName}
+            onChange={e => setTokenName(e.target.value)}
+            required
+          />
+        </div>
+        <div style={{ marginBottom: '1rem' }}>
+          <Input
+            placeholder="Token Symbol"
+            aria-label="Token Symbol"
+            value={tokenSymbol}
+            onChange={e => setTokenSymbol(e.target.value)}
+            required
+          />
+        </div>
+        <div style={{ marginBottom: '1rem' }}>
+          <Input
+            placeholder="Token Initial Supply"
+            aria-label="Token Initial Supply"
+            type="number"
+            min="0"
+            value={initialSupply}
+            onChange={e => setInitialSupply(e.target.value)}
+            required
+          />
+        </div>
+        <div style={{ marginBottom: '1rem' }}>
+          <Input
+            placeholder="Token Contract Address Salt"
+            aria-label="Token Contract Address Salt"
+            value={contractSalt}
+            onChange={e => setContractSalt(e.target.value)}
+            required
+          />
+        </div>
+        {loading ? (
+          <Button mt={1} isLoading loadingText="Create Memecoin" type="submit">
+            Create Memecoin
+          </Button>
+        ) : (
+          <Button mt={1} type="submit">
+            Create Memecoin
+          </Button>
+        )}
+      </form>
       <Divider mt={10} mb={10} style={{ borderColor: 'black' }} />
       <Text>Wallet Name : {walletName}</Text>
       <Divider mt={10} mb={10} style={{ borderColor: 'black' }} />

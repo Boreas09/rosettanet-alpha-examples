@@ -13,7 +13,7 @@ const projectId = '26f04a72b999722f634c0d20ad88561d';
 const metadata = {
   name: 'Rosy',
   description: 'Rosettanet Alpha Examples',
-  url: 'https://rosettanet-alpha-examples.vercel.app/',
+  url: 'https://rosettanet-alpha-examples.vercel.app',
   icons: ['https://rosettanet-alpha-examples.vercel.app/logo192.jpg'],
 };
 
