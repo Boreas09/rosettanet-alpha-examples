@@ -12,9 +12,9 @@ import {
 import { getStarknetAddress } from '../../utils/starknetUtils';
 import { useAccount } from 'wagmi';
 import { sendTransaction } from '@wagmi/core';
-import { calldataWithEncode } from '../../utils/multicall';
 import { parseEther } from 'ethers';
 import { reownConfig } from '../../utils/appkitProvider';
+import { prepareMulticallCalldata } from 'rosettanet';
 
 // const ethAddress =
 //   '0x49d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7';
@@ -82,16 +82,20 @@ export default function Avnu() {
       const buildSwapDataResponse = await buildSwapData.json();
 
       const calldata = [
-        [
-          '0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d',
-          '0x0219209e083275171774dab1df80982e9df2096516f06319c5c6d71ae0a8480c',
-          buildSwapDataResponse.calls[0].calldata,
-        ],
-        [
-          '0x2c56e8b00dbe2a71e57472685378fc8988bba947e9a99b26a00fade2b4fe7c2',
-          '0x01171593aa5bdadda4d6b0efde6cc94ee7649c3163d5efeb19da6c16d63a2a63',
-          buildSwapDataResponse.calls[1].calldata,
-        ],
+        {
+          contract_address:
+            '0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d',
+          entry_point:
+            '0x219209e083275171774dab1df80982e9df2096516f06319c5c6d71ae0a8480c',
+          calldata: buildSwapDataResponse.calls[0].calldata,
+        },
+        {
+          contract_address:
+            '0x2c56e8b00dbe2a71e57472685378fc8988bba947e9a99b26a00fade2b4fe7c2',
+          entry_point:
+            '0x1171593aa5bdadda4d6b0efde6cc94ee7649c3163d5efeb19da6c16d63a2a63',
+          calldata: buildSwapDataResponse.calls[1].calldata,
+        },
       ];
 
       const response = await sendTransaction(reownConfig, {
@@ -99,7 +103,7 @@ export default function Avnu() {
         account: address,
         to: '0x0000000000000000000000004645415455524553',
         value: parseEther('0'),
-        data: calldataWithEncode(calldata),
+        data: prepareMulticallCalldata(calldata),
       });
 
       console.log('Transaction sent:', response);

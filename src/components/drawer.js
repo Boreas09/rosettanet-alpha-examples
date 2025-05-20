@@ -14,7 +14,6 @@ import {
 } from '@chakra-ui/react';
 import { NavLink, Outlet } from 'react-router';
 import { useAccount, useConnect, useDisconnect, useSwitchChain } from 'wagmi';
-import { useHover } from '../utils/useHover';
 import { HamburgerIcon } from '@chakra-ui/icons';
 import AddRosettanetChain from './addRosettanetChain';
 import AddRosettanetETH from './addRosettanetETH';
@@ -25,7 +24,6 @@ export function WalletOptions() {
   const { connectors, connect } = useConnect();
   const { address } = useAccount();
   const { disconnect } = useDisconnect();
-  const [buttonHover, buttonHoverProps] = useHover();
 
   if (address) {
     return (

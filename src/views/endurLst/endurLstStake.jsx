@@ -13,13 +13,12 @@ import {
 import { useState } from 'react';
 import { useAccount } from 'wagmi';
 import { getStarknetAddress } from '../../utils/starknetUtils';
-import { parseEther } from 'ethers';
-import { calldataWithEncode } from '../../utils/multicall';
 import { sendTransaction } from '@wagmi/core';
 import { cairo } from 'starknet';
 import BigNumber from 'bignumber.js';
 import { reownConfig } from '../../utils/appkitProvider';
 import AddRosettanetXSTRK from '../../components/addRosettanetxSTRK';
+import { prepareMulticallCalldata } from 'rosettanet';
 
 export default function EndurLstStake() {
   const { address, chainId } = useAccount();
@@ -58,36 +57,36 @@ export default function EndurLstStake() {
     try {
       const starkAmount = cairo.uint256(parseEther(amount));
       const calldata = [
-        [
-          '0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d',
-          '0x0219209e083275171774dab1df80982e9df2096516f06319c5c6d71ae0a8480c',
-          [
+        {
+          contract_address:
+            '0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d',
+          entry_point:
+            '0x0219209e083275171774dab1df80982e9df2096516f06319c5c6d71ae0a8480c',
+          calldata: [
             '0x042de5b868da876768213c48019b8d46cd484e66013ae3275f8a4b97b31fc7eb',
             '0x' + new BigNumber(starkAmount.low).toString(16),
             '0x' + new BigNumber(starkAmount.high).toString(16),
           ],
-        ],
-        [
-          '0x042de5b868da876768213c48019b8d46cd484e66013ae3275f8a4b97b31fc7eb',
-          '0x00c73f681176fc7b3f9693986fd7b14581e8d540519e27400e88b8713932be01',
-          [
+        },
+        {
+          contract_address:
+            '0x042de5b868da876768213c48019b8d46cd484e66013ae3275f8a4b97b31fc7eb',
+          entry_point:
+            '0x00c73f681176fc7b3f9693986fd7b14581e8d540519e27400e88b8713932be01',
+          calldata: [
             '0x' + new BigNumber(starkAmount.low).toString(16),
             '0x' + new BigNumber(starkAmount.high).toString(16),
             snAddress,
           ],
-        ],
+        },
       ];
-
-      console.log(snAddress);
-      console.log('calldata:', calldata);
-      console.log('encoded', calldataWithEncode(calldata));
 
       const response = await sendTransaction(reownConfig, {
         chainId: 1381192787,
         account: address,
         to: address,
         value: parseEther('0'),
-        data: calldataWithEncode(calldata),
+        data: prepareMulticallCalldata(calldata),
       });
       console.log('Transaction sent:', response);
       setTransactions(prevData => [...prevData, response]);

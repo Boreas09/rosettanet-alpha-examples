@@ -19,11 +19,11 @@ import { getStarknetAddress } from '../../utils/starknetUtils';
 import { CodeBlock, dracula } from 'react-code-blocks';
 import { ENDURLST_ABI } from './endurLSTABI.js';
 import { connect } from '@starknet-io/get-starknet';
-import { calldataWithEncode } from '../../utils/multicall.js';
 import { Contract, WalletAccount, cairo } from 'starknet';
 // import { RosettanetAccount } from 'starknet';
 import { RosettanetAccount } from 'rosettanet-starknetjs-impl';
 import { asciiToHex } from '../../utils/asciiToHex';
+import { prepareMulticallCalldata } from 'rosettanet';
 
 const snTx = {
   type: 'INVOKE_FUNCTION',
@@ -754,22 +754,26 @@ export default function StarknetjsTrial() {
       const buildSwapDataResponse = await buildSwapData.json();
 
       const calldataDecoded = [
-        [
-          '0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d',
-          '0x0219209e083275171774dab1df80982e9df2096516f06319c5c6d71ae0a8480c',
-          buildSwapDataResponse.calls[0].calldata,
-        ],
-        [
-          '0x2c56e8b00dbe2a71e57472685378fc8988bba947e9a99b26a00fade2b4fe7c2',
-          '0x01171593aa5bdadda4d6b0efde6cc94ee7649c3163d5efeb19da6c16d63a2a63',
-          buildSwapDataResponse.calls[1].calldata,
-        ],
+        {
+          contract_address:
+            '0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d',
+          entry_point:
+            '0x0219209e083275171774dab1df80982e9df2096516f06319c5c6d71ae0a8480c',
+          calldata: buildSwapDataResponse.calls[0].calldata,
+        },
+        {
+          contract_address:
+            '0x2c56e8b00dbe2a71e57472685378fc8988bba947e9a99b26a00fade2b4fe7c2',
+          entry_point:
+            '0x01171593aa5bdadda4d6b0efde6cc94ee7649c3163d5efeb19da6c16d63a2a63',
+          calldata: buildSwapDataResponse.calls[1].calldata,
+        },
       ];
 
       const unsignedTx = {
         from: rAccount.address,
         to: '0x0000000000000000000000004645415455524553',
-        data: calldataWithEncode(calldataDecoded),
+        data: prepareMulticallCalldata(calldataDecoded),
         value: '0x0',
       };
 
