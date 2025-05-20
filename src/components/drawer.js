@@ -27,8 +27,8 @@ export function WalletOptions() {
 
   if (address) {
     return (
-      <Button onClick={() => disconnect()} {...buttonHoverProps} minW={'100%'}>
-        {buttonHover ? 'Disconnect' : address.slice(0, 9)}
+      <Button onClick={() => disconnect()} minW={'100%'}>
+        {address.slice(0, 9)}
       </Button>
     );
   } else {
