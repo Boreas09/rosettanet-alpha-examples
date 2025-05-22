@@ -710,8 +710,6 @@ export default function StarknetjsTrial() {
       typeof selectedAccount.send === 'function'
         ? RosettanetAccount.connect({ nodeUrl: node }, selectedAccount)
         : WalletAccount.connect({ nodeUrl: nodeStrk }, selectedAccount));
-
-      console.log(rAccount);
     } else {
       toast({
         title: 'Disconnect from left menu and connect with get-starknet.',
@@ -735,7 +733,7 @@ export default function StarknetjsTrial() {
 
       const postBody = {
         quoteId: quoteId,
-        takerAddress: snAddress.toString(16),
+        takerAddress: snAddress,
         slippage: '0.05',
         includeApprove: true,
       };

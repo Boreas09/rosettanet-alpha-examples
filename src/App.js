@@ -9,6 +9,7 @@ import Unruggable from './views/unruggable/Unruggable';
 import CurrStatus from './views/currStatus/currStatus';
 import StarknetjsTrial from './views/starknetjsTrial/starknetjsTrial';
 import Ethers from './views/ethers/ethers';
+import EndurLst from './views/endurLst/endurLst';
 
 // Define the routes
 const router = createBrowserRouter([
@@ -47,6 +48,10 @@ const router = createBrowserRouter([
       {
         path: 'starknetJS',
         element: <StarknetjsTrial />,
+      },
+      {
+        path: 'endur',
+        element: <EndurLst />,
       },
     ],
   },

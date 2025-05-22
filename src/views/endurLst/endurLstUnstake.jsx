@@ -74,7 +74,7 @@ export default function EndurLstUnstake() {
       const response = await sendTransaction(reownConfig, {
         chainId: 1381192787,
         account: address,
-        to: address,
+        to: '0x0000000000000000000000004645415455524553',
         value: parseEther('0'),
         data: prepareMulticallCalldata(calldata),
       });
@@ -105,8 +105,7 @@ export default function EndurLstUnstake() {
       <Text as="cite" fontSize={'sm'}>
         This part using Endur LST to unstake xSTRK and get STRK. After
         transaction successfully sent we can see our STRK amount in Rosettanet
-        chain in Wallet. Unstaking STRK can take a long time ~21 days. You can
-        see how long it will take below.
+        chain in Wallet. Unstaking STRK can take a long time ~21 days.
       </Text>
       <Text as="cite" fontSize={'sm'} display={'block'} mt={2}>
         Wallet needs to be in{' '}

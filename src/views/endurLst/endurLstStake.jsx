@@ -19,6 +19,7 @@ import BigNumber from 'bignumber.js';
 import { reownConfig } from '../../utils/appkitProvider';
 import AddRosettanetXSTRK from '../../components/addRosettanetxSTRK';
 import { prepareMulticallCalldata } from 'rosettanet';
+import { parseEther } from 'ethers';
 
 export default function EndurLstStake() {
   const { address, chainId } = useAccount();
@@ -30,7 +31,7 @@ export default function EndurLstStake() {
   const handleStake = async () => {
     setLoading(true);
 
-    const snAddress = (await getStarknetAddress(address)).toString(16);
+    const snAddress = await getStarknetAddress(address);
 
     if (!address) {
       toast({
@@ -84,7 +85,7 @@ export default function EndurLstStake() {
       const response = await sendTransaction(reownConfig, {
         chainId: 1381192787,
         account: address,
-        to: address,
+        to: '0x0000000000000000000000004645415455524553',
         value: parseEther('0'),
         data: prepareMulticallCalldata(calldata),
       });
