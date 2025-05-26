@@ -125,6 +125,7 @@ export function FullOpenDrawer() {
         <NavItem to="/endur">Endur LST xSTRK</NavItem>
         <NavItem to="/starknetJS">StarknetJS</NavItem>
         <NavItem to="/ethers">Ethers</NavItem>
+        <NavItem to="/getStarknetV5">Get Starknet V5</NavItem>
         <Flex
           px="4"
           py="4"
