@@ -10,6 +10,7 @@ import CurrStatus from './views/currStatus/currStatus';
 import StarknetjsTrial from './views/starknetjsTrial/starknetjsTrial';
 import Ethers from './views/ethers/ethers';
 import EndurLst from './views/endurLst/endurLst';
+import GetStarknetV5 from './views/getStarknetV5/getStarknetV5';
 
 // Define the routes
 const router = createBrowserRouter([
@@ -52,6 +53,10 @@ const router = createBrowserRouter([
       {
         path: 'endur',
         element: <EndurLst />,
+      },
+      {
+        path: 'getStarknetV5',
+        element: <GetStarknetV5 />,
       },
     ],
   },
