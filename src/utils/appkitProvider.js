@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { createAppKit } from '@reown/appkit/react';
 import { WagmiProvider } from 'wagmi';
 import { defineChain, sepolia } from '@reown/appkit/networks';
@@ -9,6 +10,9 @@ const queryClient = new QueryClient();
 
 // 1. Get projectId from https://cloud.reown.com
 const projectId = '26f04a72b999722f634c0d20ad88561d';
+
+const rosettanetRender = 'https://rosettanet.onrender.com/';
+const rosettanetLocal = 'http://localhost:3000/';
 
 const metadata = {
   name: 'Rosy',
@@ -29,7 +33,7 @@ const rosettanetSepolia = defineChain({
   },
   rpcUrls: {
     default: {
-      http: ['https://rosettanet.onrender.com/'],
+      http: [rosettanetRender],
     },
   },
   blockExplorers: {

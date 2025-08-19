@@ -43,6 +43,25 @@ export default function CurrStatus() {
           Works perfectly fine with RosettaNet. We can create a meme token using
           Metamask. Launching token will be added in a short time.
         </Text>
+
+        <Text fontWeight="bold" mb={2}>
+          StarknetJS v6
+        </Text>
+        <Text mb={4}>
+          StarknetJS v6 working with with RosettaNet. It is monkey patched to
+          RosettanetJS to support RosettaNet. Developers would like to use
+          RosettaNet would need to use RosettanetJS
+        </Text>
+
+        <Text fontWeight="bold" mb={2}>
+          Get-Starknet v5
+        </Text>
+        <Text mb={4}>
+          Get-Starknet v5 working with with RosettaNet. It is monkey patched to
+          RosettanetJS to support RosettaNet. Developers would like to use
+          RosettaNet would need to use RosettanetJS. It should support
+          starknetJS v7 with it but it not tested yet.
+        </Text>
       </Box>
     </Container>
   );

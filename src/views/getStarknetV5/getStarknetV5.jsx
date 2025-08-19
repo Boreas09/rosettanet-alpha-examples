@@ -13,11 +13,11 @@ import {
   ListItem,
   UnorderedList,
 } from '@chakra-ui/react';
-import { EvmWindowObjectWithStarknetKeys } from 'rosettanet-get-starknet-impl';
 import { getStarknetAddress } from '../../utils/starknetUtils';
 import { cairo } from 'starknet';
 import { parseEther } from 'ethers';
 import BigNumber from 'bignumber.js';
+import { EvmWalletsWithStarknetFeatures } from 'rosettanet';
 
 export default function GetStarknetV5() {
   const [transactions, setTransactions] = useState([]);
@@ -25,10 +25,11 @@ export default function GetStarknetV5() {
   const toast = useToast();
   const [wallets, setWallets] = useState([]);
   const [recipient, setRecipient] = useState('');
+  const [signatures, setSignatures] = useState([]);
 
   useEffect(() => {
     async function getWallets() {
-      const availableWallets = await EvmWindowObjectWithStarknetKeys();
+      const availableWallets = await EvmWalletsWithStarknetFeatures();
       setWallets(availableWallets);
     }
     getWallets();
@@ -52,6 +53,13 @@ export default function GetStarknetV5() {
   const handleDisconnect = wallet => {
     try {
       wallet.features['standard:disconnect'].disconnect();
+      toast({
+        title:
+          'Disconnecting can be tricky because we have a lot of wallet libraries but once you disconnect with get-starknet v5 you cannot send any requests with it.',
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+      });
     } catch (error) {
       toast({
         title: 'Error',
@@ -68,7 +76,7 @@ export default function GetStarknetV5() {
     try {
       setLoading(true);
 
-      if (!wallet.accounts[0].address) {
+      if (!wallet.accounts[0]) {
         toast({
           title: 'Please Connect Your Wallet With Get-Starknet V5.',
           status: 'error',
@@ -152,7 +160,7 @@ export default function GetStarknetV5() {
     try {
       setLoading(true);
 
-      if (!wallet.accounts[0].address) {
+      if (!wallet.accounts[0]) {
         toast({
           title: 'Please Connect Your Wallet With Get-Starknet V5.',
           status: 'error',
@@ -221,7 +229,7 @@ export default function GetStarknetV5() {
   const sendSTRK = async wallet => {
     try {
       setLoading(true);
-      if (!wallet.accounts[0].address) {
+      if (!wallet.accounts[0]) {
         toast({
           title: 'Please Connect Your Wallet With Get-Starknet V5.',
           status: 'error',
@@ -281,6 +289,133 @@ export default function GetStarknetV5() {
 
       console.log('Transaction sent:', response);
       setTransactions(prevData => [...prevData, response]);
+    } catch (e) {
+      console.error(e);
+      toast({
+        title: 'Error',
+        description: JSON.stringify(e),
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+        containerStyle: {
+          height: '80px',
+        },
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const signMessage = async wallet => {
+    try {
+      setLoading(true);
+      if (!wallet.accounts[0]) {
+        toast({
+          title: 'Please Connect Your Wallet With Get-Starknet V5.',
+          status: 'error',
+          duration: 9000,
+          isClosable: true,
+        });
+        setLoading(false);
+        return;
+      }
+
+      const snMSG = {
+        domain: {
+          name: 'DappLand',
+          chainId: 1381192787,
+          version: '1.0.2',
+        },
+        message: {
+          name: 'MonKeyCollection',
+          value: 2312,
+          // do not use BigInt type if message sent to a web browser
+        },
+        primaryType: 'Simple',
+        types: {
+          Simple: [
+            {
+              name: 'name',
+              type: 'shortstring',
+            },
+            {
+              name: 'value',
+              type: 'u128',
+            },
+          ],
+          StarknetDomain: [
+            {
+              name: 'name',
+              type: 'shortstring',
+            },
+            {
+              name: 'chainId',
+              type: 'shortstring',
+            },
+            {
+              name: 'version',
+              type: 'shortstring',
+            },
+          ],
+        },
+      };
+
+      const response = await wallet.features['starknet:walletApi'].request({
+        type: 'wallet_signTypedData',
+        params: JSON.stringify(snMSG),
+      });
+
+      setSignatures(prevData => [...prevData, response]);
+    } catch (e) {
+      console.error(e);
+      toast({
+        title: 'Error',
+        description: JSON.stringify(e),
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+        containerStyle: {
+          height: '80px',
+        },
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const watchAsset = async wallet => {
+    try {
+      setLoading(true);
+      if (!wallet.accounts[0]) {
+        toast({
+          title: 'Please Connect Your Wallet With Get-Starknet V5.',
+          status: 'error',
+          duration: 9000,
+          isClosable: true,
+        });
+        setLoading(false);
+        return;
+      }
+
+      const tokenAddress = '0xb5e1278663de249f8580ec51b6b61739bd906215'; // Replace with your token's contract address
+      const tokenSymbol = 'ETH'; // Replace with your token's symbol
+      const tokenDecimals = 18; // Replace with your token's decimals
+
+      const asset = {
+        type: 'ERC20',
+        options: {
+          address: tokenAddress,
+          symbol: tokenSymbol,
+          decimals: tokenDecimals,
+        },
+      };
+
+      const response = await wallet.features['starknet:walletApi'].request({
+        type: 'wallet_watchAsset',
+        params: asset,
+      });
+
+      console.log('Asset watched:', response);
     } catch (e) {
       console.error(e);
       toast({
@@ -373,6 +508,20 @@ export default function GetStarknetV5() {
                   >
                     Send 1 STRK
                   </Button>
+                  <Button
+                    onClick={() => {
+                      signMessage(wallet);
+                    }}
+                  >
+                    Sign
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      watchAsset(wallet);
+                    }}
+                  >
+                    watchAsset
+                  </Button>
                 </Stack>
               </Stack>
             </CardBody>
@@ -398,6 +547,18 @@ export default function GetStarknetV5() {
               >
                 View on Voyager
               </Link>
+            </Stack>
+          </CardBody>
+        </Card>
+      ))}
+      {signatures.map((sig, index) => (
+        <Card key={sig} size={'sm'} borderRadius={'lg'} my={5}>
+          <CardBody size={'sm'}>
+            <Stack>
+              <Text fontSize={'sm'} fontWeight={'bold'}>
+                Signature {index + 1}
+              </Text>
+              <Text fontSize={'sm'}>Signature Hash: {sig}</Text>
             </Stack>
           </CardBody>
         </Card>

@@ -20,10 +20,8 @@ import { CodeBlock, dracula } from 'react-code-blocks';
 import { ENDURLST_ABI } from './endurLSTABI.js';
 import { connect } from '@starknet-io/get-starknet';
 import { Contract, WalletAccount, cairo } from 'starknet';
-// import { RosettanetAccount } from 'starknet';
-import { RosettanetAccount } from 'rosettanet-starknetjs-impl';
 import { asciiToHex } from '../../utils/asciiToHex';
-import { prepareMulticallCalldata } from 'rosettanet';
+import { prepareMulticallCalldata, RosettanetAccount } from 'rosettanet';
 
 const snTx = {
   type: 'INVOKE_FUNCTION',
@@ -71,10 +69,12 @@ const snTx = {
 };
 
 const node = 'https://rosettanet.onrender.com/';
-const nodeStrk = 'https://starknet-sepolia.public.blastapi.io/rpc/v0_7';
+const nodeStrk =
+  'https://starknet-sepolia.g.alchemy.com/starknet/version/rpc/v0_8/Ml3s1yVYyyuskNoJAAkuAUDSWv7eH51C';
 
 // https://alpha-deployment.rosettanet.io
 // http://localhost:3000/
+// 'https://rosettanet.onrender.com/'
 
 export default function StarknetjsTrial() {
   const [walletName, setWalletName] = useState('');
@@ -1151,7 +1151,7 @@ export default function StarknetjsTrial() {
         left side. If not there will be an error.
       </Text>
       <Box width="100%" flexWrap={'wrap'} my={4} gap={4} display="flex">
-        <Button onClick={handleConnect()}>Connect With get-starknet</Button>
+        <Button onClick={handleConnect()}>Connect With get-starknet v4</Button>
         <Button onClick={changetoRosettanet}>
           Change Network to Rosettanet
         </Button>

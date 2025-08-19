@@ -1,6 +1,10 @@
+/* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
 import { Button, useToast } from '@chakra-ui/react';
 import { useChainId, useAccount } from 'wagmi';
+
+const rosettanetRender = 'https://rosettanet.onrender.com/';
+const rosettanetLocal = 'http://localhost:3000/';
 
 export default function AddRosettanetChain() {
   const toast = useToast();
@@ -24,7 +28,7 @@ export default function AddRosettanetChain() {
                 name: 'STRK',
                 symbol: 'STRK',
               },
-              rpcUrls: ['https://rosettanet.onrender.com/'],
+              rpcUrls: [rosettanetRender],
             },
           ],
         });
