@@ -41,6 +41,7 @@ export default function Unruggable() {
         duration: 9000,
         isClosable: true,
       });
+      setLoading(false);
       return;
     }
 
@@ -51,6 +52,7 @@ export default function Unruggable() {
         duration: 9000,
         isClosable: true,
       });
+      setLoading(false);
       return;
     }
 
@@ -66,6 +68,7 @@ export default function Unruggable() {
         duration: 9000,
         isClosable: true,
       });
+      setLoading(false);
       return;
     }
 
