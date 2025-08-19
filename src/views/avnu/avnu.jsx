@@ -8,6 +8,7 @@ import {
   Link,
   useToast,
   Container,
+  Input,
 } from '@chakra-ui/react';
 import { getStarknetAddress } from '../../utils/starknetUtils';
 import { useAccount } from 'wagmi';
@@ -25,6 +26,7 @@ export default function Avnu() {
   const { address, chainId } = useAccount();
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [value, setValue] = useState('');
   const toast = useToast();
 
   async function handleClick() {
@@ -52,11 +54,25 @@ export default function Avnu() {
       return;
     }
 
+    if (!value) {
+      toast({
+        title: 'Please enter an amount to exchange.',
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+      });
+      setLoading(false);
+      return;
+    }
+
     try {
       const snAddress = await getStarknetAddress(address);
 
+      const amount = parseEther(value);
+      const amountHex = '0x' + amount.toString(16);
+
       const getQuotes = await fetch(
-        'https://sepolia.api.avnu.fi/swap/v2/quotes?sellTokenAddress=0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d&buyTokenAddress=0x49d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7&sellAmount=0xDE0B6B3A7640000&onlyDirect=true&PULSAR_MONEY_FEE_RECIPIENT.value=0'
+        `https://sepolia.api.avnu.fi/swap/v2/quotes?sellTokenAddress=0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d&buyTokenAddress=0x49d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7&sellAmount=${amountHex}&onlyDirect=true&PULSAR_MONEY_FEE_RECIPIENT.value=0`
       );
       const getQuotesResponse = await getQuotes.json();
       const quoteId = getQuotesResponse[0].quoteId;
@@ -131,8 +147,8 @@ export default function Avnu() {
         Avnu Exchange ETH to STRK
       </Text>
       <Text as="cite" fontSize={'sm'}>
-        This part using Avnu to exchange 1 STRK to ETH. After successfully
-        exchange we can see our increased STRK amount in Wallet.
+        This part using Avnu to exchange STRK to ETH. After successfully
+        exchange we can see our increased ETH amount in Wallet.
       </Text>
       <Text as="cite" fontSize={'sm'} display={'block'} mt={2}>
         Wallet needs to be in{' '}
@@ -141,6 +157,13 @@ export default function Avnu() {
         </Text>
         Chain.
       </Text>
+      <Input
+        placeholder="Enter amount to exchange"
+        mt={3}
+        mb={3}
+        value={value}
+        onChange={e => setValue(e.target.value)}
+      />
       {loading ? (
         <Button mt={2} isLoading loadingText="Exchange">
           Exchange
