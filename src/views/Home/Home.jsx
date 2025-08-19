@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Container,
@@ -7,10 +7,26 @@ import {
   UnorderedList,
   ListItem,
   Link,
+  Input,
+  Button,
 } from '@chakra-ui/react';
 import { ExternalLinkIcon } from '@chakra-ui/icons';
+import { getStarknetAddress } from '../../utils/starknetUtils';
 
 export default function Home() {
+  const [ethAddress, setEthAddress] = useState('');
+  const [starknetAddress, setStarknetAddress] = useState('');
+
+  const handleGetStarknetAddress = async () => {
+    if (!ethAddress) {
+      alert('Please enter an Ethereum address.');
+      return;
+    }
+
+    const starknetAddress = await getStarknetAddress(ethAddress);
+    return setStarknetAddress(starknetAddress);
+  };
+
   return (
     <Container maxW="3xl" overflow={'hidden'}>
       <Heading as="h2" size="lg" my={4}>
@@ -99,6 +115,22 @@ export default function Home() {
           Rosetta aims to give EVM experience to users where they won't ever
           notify they are using Starknet.
         </Text>
+        <Heading as="h2" isExternal size="lg" mb={4}>
+          Get Starknet Address from ETH Address
+        </Heading>
+        <Input
+          placeholder="Enter ETH Address"
+          value={ethAddress}
+          onChange={e => setEthAddress(e.target.value)}
+        ></Input>
+        <Button mt={4} onClick={handleGetStarknetAddress}>
+          Get Starknet Address
+        </Button>
+        {starknetAddress && (
+          <Text mt={4} fontWeight="bold">
+            Starknet Address: {starknetAddress}
+          </Text>
+        )}
       </Box>
     </Container>
   );

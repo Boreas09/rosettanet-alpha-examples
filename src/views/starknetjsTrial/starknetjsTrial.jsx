@@ -1019,6 +1019,7 @@ export default function StarknetjsTrial() {
         duration: 9000,
         isClosable: true,
       });
+      setLoading(false);
     }
 
     if (
@@ -1033,6 +1034,7 @@ export default function StarknetjsTrial() {
         duration: 9000,
         isClosable: true,
       });
+      setLoading(false);
       return;
     }
 
@@ -1050,6 +1052,7 @@ export default function StarknetjsTrial() {
         duration: 9000,
         isClosable: true,
       });
+      setLoading(false);
       return;
     }
 

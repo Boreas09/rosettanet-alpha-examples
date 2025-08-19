@@ -68,7 +68,7 @@ export default function Ethers() {
     const tx = {
       chainId: 1381192787,
       to: recipient,
-      value: ethers.parseEther('0.01'),
+      value: ethers.parseEther('1'),
     };
 
     try {
@@ -133,7 +133,7 @@ export default function Ethers() {
         Chain.
       </Text>
       <Input
-        placeholder="Enter Recipient Address"
+        placeholder="Enter Recipient ETH Address"
         mt={3}
         mb={3}
         value={recipient}
@@ -143,12 +143,12 @@ export default function Ethers() {
         Connect With Ethers
       </Button>
       {loading ? (
-        <Button mt={2} isLoading loadingText="Send 0.001 STRK">
-          Send 0.001 STRK
+        <Button mt={2} isLoading loadingText="Send 1 STRK">
+          Send 1 STRK
         </Button>
       ) : (
         <Button mt={2} onClick={handleFundTransfer}>
-          Send 0.001 STRK
+          Send 1 STRK
         </Button>
       )}
       <Text mt={2} fontSize={'lg'} fontWeight={'bold'}>
